@@ -4,12 +4,13 @@ import type { Section, Song } from '../types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type PrintStyle = 'standard' | 'compact' | 'booklet';
+type PrintStyle = 'standard' | 'compact' | 'booklet' | 'cards';
 
 const STYLE_LABELS: Record<PrintStyle, { label: string; sub: string }> = {
-  standard: { label: 'Standard', sub: 'A4 · en sång per sida' },
-  compact:  { label: 'Kompakt',  sub: 'A4 · flera sånger per sida' },
-  booklet:  { label: 'Fickhäfte', sub: 'A5 · vik & häfta' },
+  standard: { label: 'Standard',   sub: 'A4 · en sång per sida' },
+  compact:  { label: 'Kompakt',    sub: 'A4 · flera sånger per sida' },
+  booklet:  { label: 'Fickhäfte',  sub: 'A5 · vik & häfta' },
+  cards:    { label: 'Kort',       sub: 'A4 · kreditkortstorlek · vik & laminera' },
 };
 
 const ROMAN = [
@@ -102,6 +103,153 @@ function SongBlock({ song, index }: { song: Song; index: number }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// ─── Card split algorithm ─────────────────────────────────────────────────────
+
+interface CardData {
+  song: Song;
+  cardNum: number;
+  totalCards: number;
+  frontSections: Section[];
+  backSections: Section[];
+  songIndex: number;
+}
+
+// Height of a section in "line units" at the card's font size (0.54rem, lh 1.5).
+// This mirrors the CSS greedy column-fill with break-inside:avoid:
+// sections pile into the current column until one doesn't fit, then move to the next.
+function sectionHeight(sec: Section): number {
+  const lyricLines = sec.content ? sec.content.split('\n').length : 0;
+  const hasChords = sec.chords.length > 0;
+  return (sec.label ? 0.7 : 0) + lyricLines + (hasChords ? lyricLines * 0.7 : 0) + 0.4;
+}
+
+// Simulate CSS multi-column fill with break-inside:avoid.
+// Returns the sections that fit in ≤ maxCols columns of colHeight, and the rest.
+function splitByColumns(
+  sections: Section[],
+  colHeight: number,
+  maxCols: number,
+): { fits: Section[]; rest: Section[] } {
+  let col = 0;
+  let colFill = 0;
+
+  for (let i = 0; i < sections.length; i++) {
+    const h = sectionHeight(sections[i]);
+    // Section doesn't fit in current column (and col is non-empty) → advance
+    if (colFill > 0 && colFill + h > colHeight) {
+      col++;
+      colFill = 0;
+    }
+    // Would need a (maxCols+1)th column → stop (always let at least 1 section through)
+    if (col >= maxCols && i > 0) {
+      return { fits: sections.slice(0, i), rest: sections.slice(i) };
+    }
+    colFill += h;
+  }
+  return { fits: sections, rest: [] };
+}
+
+// Column height in line units:
+// Front: 54mm total − 4.5mm padding − ~9mm header ≈ 40.5mm ÷ 3.43mm/line ≈ 11.8 → 11
+// Back:  54mm total − 4.5mm padding            ≈ 49.5mm ÷ 3.43mm/line ≈ 14.4 → 14
+const FRONT_COL_H = 11;
+const BACK_COL_H = 14;
+
+function buildCardData(songs: Song[]): CardData[] {
+  const result: CardData[] = [];
+
+  for (let songIndex = 0; songIndex < songs.length; songIndex++) {
+    const song = songs[songIndex];
+    let remaining = [...song.sections];
+
+    if (remaining.length === 0) {
+      result.push({ song, cardNum: 1, totalCards: 1, frontSections: [], backSections: [], songIndex });
+      continue;
+    }
+
+    const cards: { front: Section[]; back: Section[] }[] = [];
+    while (remaining.length > 0) {
+      const { fits: front, rest: afterFront } = splitByColumns(remaining, FRONT_COL_H, 2);
+      const { fits: back, rest: afterBack } = splitByColumns(afterFront, BACK_COL_H, 2);
+      cards.push({ front, back });
+      remaining = afterBack;
+    }
+
+    for (let ci = 0; ci < cards.length; ci++) {
+      result.push({
+        song, cardNum: ci + 1, totalCards: cards.length,
+        frontSections: cards[ci].front, backSections: cards[ci].back,
+        songIndex,
+      });
+    }
+  }
+
+  return result;
+}
+
+// ─── Card components ──────────────────────────────────────────────────────────
+
+function SongCard({ data }: { data: CardData }) {
+  const { song, cardNum, totalCards, frontSections, backSections, songIndex } = data;
+  const isFirst = cardNum === 1;
+  const multi = totalCards > 1;
+
+  return (
+    <div className="card-wrap">
+      <div className="card">
+        {/* Front — header + first batch of lyrics */}
+        <div className="card-front">
+          <div className="card-header">
+            <div className="card-header-row">
+              {isFirst && (
+                <span className="card-num">{ROMAN[songIndex] ?? String(songIndex + 1)}</span>
+              )}
+              <h2 className="card-title">{song.title}</h2>
+              {multi && <span className="card-part">{cardNum}/{totalCards}</span>}
+            </div>
+            {isFirst && (song.credit || song.original) && (
+              <p className="card-sub">
+                {song.credit}
+                {song.credit && song.original && ' · '}
+                {song.original}
+              </p>
+            )}
+          </div>
+          <div className="card-lyrics">
+            {frontSections.map((sec) => (
+              <div key={sec.id} className="section">
+                {sec.label && <p className="section-label">{sec.label}</p>}
+                {renderLyrics(sec)}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Back — second batch of lyrics, readable by flipping the laminated card */}
+        <div className="card-back">
+          {backSections.map((sec) => (
+            <div key={sec.id} className="section">
+              {sec.label && <p className="section-label">{sec.label}</p>}
+              {renderLyrics(sec)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CardSheet({ cards }: { cards: CardData[] }) {
+  return (
+    <div className="card-sheet">
+      {cards.map((data, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: slot index within sheet is stable
+        <SongCard key={i} data={data} />
+      ))}
     </div>
   );
 }
@@ -230,10 +378,87 @@ const BOOKLET_CSS = `
   }
 `;
 
+const CARDS_CSS = `
+  html { background: #C0BCB5; font-size: 16px; }
+  body { background: #C0BCB5; padding: 5rem 1rem 2rem; }
+
+  /* ── Sheet: 2×2 grid on A4 ── */
+  .card-sheet {
+    width: 210mm; background: #E8E4DC; margin: 0 auto 3rem;
+    padding: 10mm; display: grid;
+    grid-template-columns: repeat(2, 85.6mm);
+    column-gap: 18.8mm; row-gap: 10mm;
+    justify-content: center; align-content: start;
+    box-shadow: 0 4px 40px rgba(0,0,0,.12);
+  }
+
+  /* ── Card wrap ── */
+  .card-wrap { position: relative; width: 85.6mm; height: 108mm; }
+
+  /* ── Card: just a positioned container, no visual style ── */
+  .card { position: absolute; inset: 0; }
+
+  /* ── Front half: 0–54mm, all four corners rounded ──
+     Explicit height on .card-lyrics prevents CSS columns from overflowing to a
+     phantom 3rd column when break-inside:avoid causes a section to skip columns. */
+  .card-front {
+    position: absolute; top: 0; left: 0; right: 0; height: 54mm;
+    background: var(--cream); border-radius: 3.5mm; overflow: hidden;
+    padding: 2.5mm 3.5mm 2mm;
+  }
+  .card-header {
+    margin-bottom: 1mm; padding-bottom: 1mm;
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .card-header-row { display: flex; align-items: baseline; gap: 1.5mm; }
+  .card-num {
+    font-family: 'Cormorant Garamond'; font-size: 0.4rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); flex-shrink: 0;
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond'; font-size: 0.72rem; font-weight: 500;
+    line-height: 1.2; color: var(--ink);
+  }
+  .card-part { font-size: 0.38rem; color: var(--ink-soft); margin-left: auto; flex-shrink: 0; }
+  .card-sub {
+    font-size: 0.38rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-soft); margin-top: 0.5mm;
+  }
+  .card-lyrics {
+    column-count: 2; column-gap: 3mm; overflow: hidden;
+    height: 40mm;
+  }
+
+  /* ── Back half: 54–108mm, all four corners rounded, touching the front ── */
+  .card-back {
+    position: absolute; top: 54mm; left: 0; right: 0; height: 54mm;
+    background: var(--cream); border-radius: 3.5mm; overflow: hidden;
+    padding: 2.5mm 3.5mm;
+    column-count: 2; column-gap: 3mm;
+  }
+
+  /* ── Sections (shared by both halves) ── */
+  .section { break-inside: avoid; margin-bottom: 1.5mm; font-size: 0.54rem; line-height: 1.5; }
+  .section-label { font-size: 0.44rem; margin-bottom: 0.5mm; }
+  .chord { font-size: 0.42rem; margin-bottom: 0.05rem; }
+
+  @page { size: A4; margin: 0; }
+  @media print {
+    html, body { background: none; padding: 0; }
+    .card-sheet {
+      margin: 0; box-shadow: none;
+      page-break-after: always; break-after: page;
+    }
+    .card-sheet:last-child { page-break-after: auto; break-after: auto; }
+    .card-front, .card-back { border: 0.4px solid rgba(0,0,0,0.15); }
+  }
+`;
+
 const STYLE_CSS: Record<PrintStyle, string> = {
   standard: STANDARD_CSS,
   compact: COMPACT_CSS,
   booklet: BOOKLET_CSS,
+  cards: CARDS_CSS,
 };
 
 // ─── Style switcher UI ────────────────────────────────────────────────────────
@@ -317,6 +542,11 @@ export default function PrintView() {
 
   if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>Loading…</div>;
 
+  // Build card data (songs split into fold-over credit cards, with continuation cards for long songs)
+  const allCards = buildCardData(songs);
+  const cardChunks: CardData[][] = [];
+  for (let i = 0; i < allCards.length; i += 4) cardChunks.push(allCards.slice(i, i + 4));
+
   return (
     <>
       <style>{BASE_CSS + STYLE_CSS[printStyle]}</style>
@@ -330,6 +560,12 @@ export default function PrintView() {
             <SongBlock key={song.id} song={song} index={i} />
           ))}
         </div>
+      ) : printStyle === 'cards' ? (
+        // Cards: 4 per A4 sheet, fold-over credit card format
+        cardChunks.map((chunk, ci) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: sheet index is stable
+          <CardSheet key={ci} cards={chunk} />
+        ))
       ) : (
         // Standard + Booklet: each song gets its own page
         <>
