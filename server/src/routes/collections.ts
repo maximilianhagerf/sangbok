@@ -3,9 +3,16 @@ import db from '../db';
 
 const router = Router();
 
-// List all collections
+// List all collections with song_count and cover_title preview
 router.get('/', (_req, res) => {
-  const cols = db.prepare(`SELECT * FROM collections ORDER BY position`).all();
+  const cols = db
+    .prepare(
+      `SELECT c.*,
+        (SELECT COUNT(*) FROM songs WHERE collection_id = c.id) AS song_count,
+        (SELECT value FROM settings WHERE collection_id = c.id AND key = 'cover_title') AS cover_title
+       FROM collections c ORDER BY c.position`,
+    )
+    .all();
   res.json(cols);
 });
 

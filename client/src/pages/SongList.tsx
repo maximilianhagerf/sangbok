@@ -17,7 +17,7 @@ import { Plus, Printer, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as api from '../api';
-import CollectionSwitcher from '../components/collections/CollectionSwitcher';
+import CollectionSidebar from '../components/collections/CollectionSidebar';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import CoverSettingsPanel from '../components/settings/CoverSettingsPanel';
 import BulkBar from '../components/songs/BulkBar';
@@ -99,118 +99,126 @@ export default function SongList() {
 
   if (loading && activeCollectionId === null) {
     return (
-      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+      <div className="flex items-center justify-center h-screen text-stone-400 text-sm">
         {t('songEdit.loading')}
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-['Cormorant_Garamond'] text-3xl font-light text-stone-800">
-            {t('songList.heading')}
-          </h1>
-          <p className="text-sm text-stone-400 mt-0.5">
+    <div className="flex h-screen overflow-hidden bg-stone-50">
+      {/* ── Sidebar ─────────────────────────────── */}
+      <aside className="w-60 shrink-0 border-r border-stone-200 bg-white flex flex-col px-3 py-6 gap-6 overflow-y-auto">
+        <h1 className="font-['Cormorant_Garamond'] text-2xl font-light text-stone-800 px-1">
+          {t('songList.heading')}
+        </h1>
+
+        {collections.length > 0 && (
+          <CollectionSidebar
+            collections={collections}
+            activeId={activeCollectionId}
+            onSwitch={handleSwitchCollection}
+            onRename={renameCollection}
+            onDelete={handleDeleteCollection}
+            onCreate={createCollection}
+          />
+        )}
+      </aside>
+
+      {/* ── Main content ────────────────────────── */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top bar */}
+        <header className="flex items-center justify-between px-8 py-5 border-b border-stone-200 bg-white">
+          <p className="text-sm text-stone-400">
             {t('songList.songCount', { count: songs.length })}
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <a
-            href={`/print?c=${activeCollectionId}`}
-            target="_blank"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
-            rel="noopener"
-          >
-            <Printer size={14} /> {t('nav.printView')}
-          </a>
-          <LanguageSwitcher />
-          <button
-            type="button"
-            onClick={() => setShowSettings((v) => !v)}
-            className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-stone-100 text-stone-800' : 'text-stone-400 hover:text-stone-700 hover:bg-stone-50'}`}
-            title={t('coverSettings.title')}
-          >
-            <Settings size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
-          >
-            <Plus size={14} /> {t('songList.newSong')}
-          </button>
-        </div>
-      </div>
+          <div className="flex items-center gap-2">
+            <a
+              href={`/print?c=${activeCollectionId}`}
+              target="_blank"
+              rel="noopener"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+            >
+              <Printer size={14} /> {t('nav.printView')}
+            </a>
+            <LanguageSwitcher />
+            <button
+              type="button"
+              onClick={() => setShowSettings((v) => !v)}
+              className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-stone-100 text-stone-800' : 'text-stone-400 hover:text-stone-700 hover:bg-stone-50'}`}
+              title={t('coverSettings.title')}
+            >
+              <Settings size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
+            >
+              <Plus size={14} /> {t('songList.newSong')}
+            </button>
+          </div>
+        </header>
 
-      {/* Collection switcher */}
-      {collections.length > 0 && (
-        <CollectionSwitcher
-          collections={collections}
-          activeId={activeCollectionId}
-          onSwitch={handleSwitchCollection}
-          onRename={renameCollection}
-          onDelete={handleDeleteCollection}
-          onCreate={createCollection}
-        />
-      )}
+        {/* Cover settings panel */}
+        {showSettings && activeCollectionId !== null && (
+          <div className="px-8 pt-5">
+            <CoverSettingsPanel
+              collectionId={activeCollectionId}
+              settings={settings}
+              onSave={setSettings}
+              onClose={() => setShowSettings(false)}
+            />
+          </div>
+        )}
 
-      {/* Cover settings panel */}
-      {showSettings && activeCollectionId !== null && (
-        <CoverSettingsPanel
-          collectionId={activeCollectionId}
-          settings={settings}
-          onSave={setSettings}
-          onClose={() => setShowSettings(false)}
-        />
-      )}
-
-      {/* Loading indicator when switching collections */}
-      {loading && activeCollectionId !== null && (
-        <div className="flex items-center justify-center py-8 text-stone-400 text-sm">
-          {t('songEdit.loading')}
-        </div>
-      )}
-
-      {/* List */}
-      {!loading && (
-        <>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={songs.map((s) => s.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-2 pl-8">
-                {songs.map((song) => (
-                  <SongRow
-                    key={song.id}
-                    song={song}
-                    selected={selected.has(song.id)}
-                    selecting={selecting}
-                    onToggle={handleToggle}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-
-          {songs.length === 0 && (
-            <div className="text-center py-16 text-stone-400">
-              <p className="text-sm">{t('songList.noSongs')}</p>
-              <button
-                type="button"
-                onClick={() => setShowModal(true)}
-                className="mt-2 text-sm underline hover:text-stone-600"
-              >
-                {t('songList.addFirst')}
-              </button>
+        {/* Song list */}
+        <div className="flex-1 overflow-y-auto px-8 py-6">
+          {loading && activeCollectionId !== null ? (
+            <div className="flex items-center justify-center py-16 text-stone-400 text-sm">
+              {t('songEdit.loading')}
             </div>
+          ) : (
+            <>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={songs.map((s) => s.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-2 pl-8 max-w-2xl">
+                    {songs.map((song) => (
+                      <SongRow
+                        key={song.id}
+                        song={song}
+                        selected={selected.has(song.id)}
+                        selecting={selecting}
+                        onToggle={handleToggle}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+
+              {songs.length === 0 && (
+                <div className="text-center py-16 text-stone-400">
+                  <p className="text-sm">{t('songList.noSongs')}</p>
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(true)}
+                    className="mt-2 text-sm underline hover:text-stone-600"
+                  >
+                    {t('songList.addFirst')}
+                  </button>
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
+        </div>
+      </main>
 
       {/* Bulk action bar */}
       {selecting && (

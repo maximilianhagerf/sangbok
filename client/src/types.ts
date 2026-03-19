@@ -2,6 +2,8 @@ export interface Collection {
   id: number;
   name: string;
   position: number;
+  song_count: number;
+  cover_title: string | null;
 }
 
 export interface Settings {
