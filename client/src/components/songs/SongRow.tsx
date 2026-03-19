@@ -17,8 +17,9 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
     disabled: selecting,
   });
 
+  const credit = [song.credit, song.original && `(${song.original})`].filter(Boolean).join(' · ');
+
   return (
-    // Outer wrapper: owns the group hover + DnD ref
     <div
       ref={setNodeRef}
       style={{
@@ -26,9 +27,9 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
         transition,
         opacity: isDragging ? 0.4 : 1,
       }}
-      className="relative group flex items-center"
+      className="relative group flex items-center pl-6"
     >
-      {/* Checkbox — floats to the left of the card, outside it */}
+      {/* Checkbox — floats to the left of the card */}
       <div
         className={`absolute -left-6 flex items-center justify-center transition-opacity ${
           selecting ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
@@ -43,7 +44,7 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
       </div>
 
       {/* Song card */}
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set when selecting; onClick is a no-op otherwise */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set when selecting */}
       <div
         role={selecting ? 'button' : undefined}
         tabIndex={selecting ? 0 : undefined}
@@ -53,7 +54,7 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
           selected ? 'border-stone-400 bg-stone-50' : 'border-stone-200 hover:border-stone-300'
         } ${selecting ? 'cursor-pointer' : ''}`}
       >
-        {/* Drag handle — hidden while selecting */}
+        {/* Drag handle */}
         {!selecting && (
           <button
             type="button"
@@ -66,29 +67,28 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
           </button>
         )}
 
-        <span className="text-xs text-stone-400 font-mono w-6 text-right shrink-0">
+        <span className="text-xs text-stone-400 font-mono w-5 text-right shrink-0">
           {song.position}
         </span>
 
-        <div className="flex-1 min-w-0">
-          <p className="font-['Cormorant_Garamond',Georgia,serif] text-base font-medium text-stone-800 leading-tight truncate">
-            {song.title}
-          </p>
-          {(song.credit || song.original) && (
-            <p className="text-xs text-stone-400 truncate mt-0.5">
-              {[song.credit, song.original && `(${song.original})`].filter(Boolean).join(' · ')}
+        {/* Title + credit — always two lines for uniform card height */}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="flex items-baseline gap-2 min-w-0">
+            <p className="font-['Cormorant_Garamond',Georgia,serif] text-base font-medium text-stone-800 leading-tight truncate">
+              {song.title}
             </p>
-          )}
+            <span className="text-xs text-stone-300 shrink-0 whitespace-nowrap">
+              {song.sections.length} section{song.sections.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          {/* Always rendered — keeps card height uniform across rows */}
+          <p className="text-xs text-stone-400 truncate mt-0.5 h-4 leading-4">{credit}</p>
         </div>
-
-        <span className="text-xs text-stone-300 shrink-0">
-          {song.sections.length} section{song.sections.length !== 1 ? 's' : ''}
-        </span>
 
         {!selecting && (
           <Link
             to={`/songs/${song.id}`}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-stone-700"
+            className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-stone-700 shrink-0"
             aria-label="Edit song"
             onClick={(e) => e.stopPropagation()}
           >

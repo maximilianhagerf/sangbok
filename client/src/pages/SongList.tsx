@@ -9,9 +9,9 @@ import {
 } from '@dnd-kit/core';
 import {
   arrayMove,
+  rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Plus, Printer, Settings } from 'lucide-react';
 import { useState } from 'react';
@@ -173,20 +173,19 @@ export default function SongList() {
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
-                <SortableContext
-                  items={songs.map((s) => s.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2 pl-8 max-w-2xl">
-                    {songs.map((song) => (
-                      <SongRow
-                        key={song.id}
-                        song={song}
-                        selected={selected.has(song.id)}
-                        selecting={selecting}
-                        onToggle={handleToggle}
-                      />
-                    ))}
+                <SortableContext items={songs.map((s) => s.id)} strategy={rectSortingStrategy}>
+                  <div className="@container">
+                    <div className="grid grid-cols-1 @6xl:grid-cols-2 gap-y-2 gap-x-8">
+                      {songs.map((song) => (
+                        <SongRow
+                          key={song.id}
+                          song={song}
+                          selected={selected.has(song.id)}
+                          selecting={selecting}
+                          onToggle={handleToggle}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </SortableContext>
               </DndContext>
