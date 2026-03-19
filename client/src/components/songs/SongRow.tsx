@@ -14,7 +14,6 @@ interface SongRowProps {
 export default function SongRow({ song, selected, selecting, onToggle }: SongRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: song.id,
-    disabled: selecting,
   });
 
   const credit = [song.credit, song.original && `(${song.original})`].filter(Boolean).join(' · ');
@@ -72,18 +71,16 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
           </span>
         </label>
 
-        {/* Drag handle — hidden when selecting */}
-        {!selecting && (
-          <button
-            type="button"
-            {...attributes}
-            {...listeners}
-            className="text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing touch-none shrink-0"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <GripVertical size={18} />
-          </button>
-        )}
+        {/* Drag handle */}
+        <button
+          type="button"
+          {...attributes}
+          {...listeners}
+          className="text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing touch-none shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical size={18} />
+        </button>
 
         <span className="text-xs text-stone-400 font-mono w-5 text-right shrink-0">
           {song.position}
@@ -103,16 +100,14 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
           <p className="text-xs text-stone-400 truncate mt-0.5 h-4 leading-4">{credit}</p>
         </div>
 
-        {!selecting && (
-          <Link
-            to={`/songs/${song.id}`}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-stone-700 shrink-0"
-            aria-label="Edit song"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Pencil size={15} />
-          </Link>
-        )}
+        <Link
+          to={`/songs/${song.id}`}
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-stone-700 shrink-0"
+          aria-label="Edit song"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Pencil size={15} />
+        </Link>
       </div>
     </div>
   );
