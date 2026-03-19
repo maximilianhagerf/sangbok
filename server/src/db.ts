@@ -1,12 +1,12 @@
-import Database from 'better-sqlite3'
-import path from 'path'
+import path from 'node:path';
+import Database from 'better-sqlite3';
 
-const DB_PATH = path.join(__dirname, '../data/sangbok.db')
+const DB_PATH = path.join(__dirname, '../data/sangbok.db');
 
-const db = new Database(DB_PATH)
+const db = new Database(DB_PATH);
 
-db.pragma('journal_mode = WAL')
-db.pragma('foreign_keys = ON')
+db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
 
 db.prepare(`CREATE TABLE IF NOT EXISTS songs (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,7 +15,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS songs (
   credit    TEXT,
   original  TEXT,
   columns   INTEGER NOT NULL DEFAULT 2
-)`).run()
+)`).run();
 
 db.prepare(`CREATE TABLE IF NOT EXISTS sections (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,9 +24,9 @@ db.prepare(`CREATE TABLE IF NOT EXISTS sections (
   label     TEXT,
   content   TEXT    NOT NULL DEFAULT '',
   chords    TEXT
-)`).run()
+)`).run();
 
-db.prepare(`CREATE INDEX IF NOT EXISTS idx_sections_song ON sections(song_id)`).run()
-db.prepare(`CREATE INDEX IF NOT EXISTS idx_songs_position ON songs(position)`).run()
+db.prepare(`CREATE INDEX IF NOT EXISTS idx_sections_song ON sections(song_id)`).run();
+db.prepare(`CREATE INDEX IF NOT EXISTS idx_songs_position ON songs(position)`).run();
 
-export default db
+export default db;

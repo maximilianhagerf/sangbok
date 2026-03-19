@@ -1,30 +1,73 @@
-import { useEffect, useState } from 'react'
-import type { Song, Section } from '../types'
-import * as api from '../api'
+import { useEffect, useState } from 'react';
+import * as api from '../api';
+import type { Section, Song } from '../types';
 
-const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
-               'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
-               'XXI','XXII','XXIII','XXIV','XXV','XXVI','XXVII','XXVIII','XXIX','XXX',
-               'XXXI','XXXII','XXXIII','XXXIV','XXXV','XXXVI','XXXVII','XXXVIII','XXXIX','XL']
+const ROMAN = [
+  'I',
+  'II',
+  'III',
+  'IV',
+  'V',
+  'VI',
+  'VII',
+  'VIII',
+  'IX',
+  'X',
+  'XI',
+  'XII',
+  'XIII',
+  'XIV',
+  'XV',
+  'XVI',
+  'XVII',
+  'XVIII',
+  'XIX',
+  'XX',
+  'XXI',
+  'XXII',
+  'XXIII',
+  'XXIV',
+  'XXV',
+  'XXVI',
+  'XXVII',
+  'XXVIII',
+  'XXIX',
+  'XXX',
+  'XXXI',
+  'XXXII',
+  'XXXIII',
+  'XXXIV',
+  'XXXV',
+  'XXXVI',
+  'XXXVII',
+  'XXXVIII',
+  'XXXIX',
+  'XL',
+];
 
 function renderLyrics(section: Section): JSX.Element {
   if (section.chords.length === 0) {
-    const lines = section.content.split('\n')
+    const lines = section.content.split('\n');
     return (
       <p>
         {lines.map((line, i) => (
-          <span key={i}>{line}{i < lines.length - 1 && <br />}</span>
+          // biome-ignore lint/suspicious/noArrayIndexKey: lyric line index is the stable identity
+          <span key={i}>
+            {line}
+            {i < lines.length - 1 && <br />}
+          </span>
         ))}
       </p>
-    )
+    );
   }
 
   // Interleave chords with lyric lines
-  const lines = section.content.split('\n')
-  const chordMap = new Map(section.chords.map(c => [c.line, c.chord]))
+  const lines = section.content.split('\n');
+  const chordMap = new Map(section.chords.map((c) => [c.line, c.chord]));
   return (
     <>
       {lines.map((line, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: lyric line index is the stable identity
         <span key={i}>
           {chordMap.has(i) && <span className="chord">{chordMap.get(i)}</span>}
           <span>{line}</span>
@@ -32,11 +75,12 @@ function renderLyrics(section: Section): JSX.Element {
         </span>
       ))}
     </>
-  )
+  );
 }
 
 function SongPage({ song, index }: { song: Song; index: number }) {
-  const colClass = song.columns === 1 ? 'lyrics single' : song.columns === 3 ? 'lyrics three' : 'lyrics'
+  const colClass =
+    song.columns === 1 ? 'lyrics single' : song.columns === 3 ? 'lyrics three' : 'lyrics';
   return (
     <div className="page">
       <div className="song-header">
@@ -52,7 +96,7 @@ function SongPage({ song, index }: { song: Song; index: number }) {
       </div>
 
       <div className={colClass}>
-        {song.sections.map(sec => (
+        {song.sections.map((sec) => (
           <div key={sec.id} className="section">
             {sec.label && <p className="section-label">{sec.label}</p>}
             {renderLyrics(sec)}
@@ -66,18 +110,21 @@ function SongPage({ song, index }: { song: Song; index: number }) {
         <div className="page-foot-line"></div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function PrintView() {
-  const [songs, setSongs] = useState<Song[]>([])
-  const [loading, setLoading] = useState(true)
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.getSongs().then(setSongs).finally(() => setLoading(false))
-  }, [])
+    api
+      .getSongs()
+      .then(setSongs)
+      .finally(() => setLoading(false));
+  }, []);
 
-  if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>Loading…</div>
+  if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>Loading…</div>;
 
   return (
     <>
@@ -135,20 +182,77 @@ export default function PrintView() {
       `}</style>
 
       {/* Cover */}
-      <div className="page cover" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-        <p style={{ fontSize: '0.68rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '6mm' }}>
+      <div
+        className="page cover"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            fontSize: '0.68rem',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            marginBottom: '6mm',
+          }}
+        >
           En samling sånger
         </p>
-        <div style={{ width: '40mm', height: '0.5px', background: 'var(--rule)', marginBottom: '8mm' }}></div>
-        <h1 style={{ fontFamily: 'Cormorant Garamond', fontSize: '4.5rem', fontWeight: 300, lineHeight: 1.05, color: 'var(--ink)', marginBottom: '6mm' }}>
-          Våra<br /><em>Sånger</em>
+        <div
+          style={{ width: '40mm', height: '0.5px', background: 'var(--rule)', marginBottom: '8mm' }}
+        ></div>
+        <h1
+          style={{
+            fontFamily: 'Cormorant Garamond',
+            fontSize: '4.5rem',
+            fontWeight: 300,
+            lineHeight: 1.05,
+            color: 'var(--ink)',
+            marginBottom: '6mm',
+          }}
+        >
+          Våra
+          <br />
+          <em>Sånger</em>
         </h1>
-        <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-soft)', marginBottom: '8mm' }}>
+        <p
+          style={{
+            fontSize: '0.72rem',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--ink-soft)',
+            marginBottom: '8mm',
+          }}
+        >
           Disney &amp; Camp Glöd 2025
         </p>
-        <div style={{ width: '40mm', height: '0.5px', background: 'var(--rule)', marginBottom: '10mm' }}></div>
-        <ul style={{ columns: 2, columnGap: '8mm', listStyle: 'none', textAlign: 'left', fontSize: '0.72rem', lineHeight: '1.85', color: 'var(--ink-soft)' }}>
-          {songs.map(s => <li key={s.id}>{s.title}</li>)}
+        <div
+          style={{
+            width: '40mm',
+            height: '0.5px',
+            background: 'var(--rule)',
+            marginBottom: '10mm',
+          }}
+        ></div>
+        <ul
+          style={{
+            columns: 2,
+            columnGap: '8mm',
+            listStyle: 'none',
+            textAlign: 'left',
+            fontSize: '0.72rem',
+            lineHeight: '1.85',
+            color: 'var(--ink-soft)',
+          }}
+        >
+          {songs.map((s) => (
+            <li key={s.id}>{s.title}</li>
+          ))}
         </ul>
       </div>
 
@@ -156,9 +260,9 @@ export default function PrintView() {
         <SongPage key={song.id} song={song} index={i} />
       ))}
 
-      <button className="print-btn" onClick={() => window.print()}>
+      <button type="button" className="print-btn" onClick={() => window.print()}>
         Print / Save PDF
       </button>
     </>
-  )
+  );
 }

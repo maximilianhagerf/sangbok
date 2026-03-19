@@ -1,0 +1,7 @@
+{
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Always write a single conventional commit message covering all staged changes. Format: type(scope): description. Types: feat, fix, style, refactor, db, chore. Scopes: client, server, db, print, seed. Lowercase, present tense, under 72 characters, no period. Never split into multiple commits — one message for the entire session's changes."
+    }
+  ]
+}
