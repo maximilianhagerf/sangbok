@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "allSongs": "All songs",
+    "printView": "Print view"
+  },
+  "songList": {
+    "heading": "Songbook",
+    "songCount": "{{count}} song",
+    "songCount_other": "{{count}} songs",
+    "newSong": "New song",
+    "noSongs": "No songs yet.",
+    "addFirst": "Add the first one"
+  },
+  "bulkBar": {
+    "selected": "selected",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "delete": "Delete {{count}}",
+    "deleting": "Deleting…",
+    "confirmDelete": "Delete {{count}} song? This cannot be undone.",
+    "confirmDelete_other": "Delete {{count}} songs? This cannot be undone."
+  },
+  "songModal": {
+    "title": "New song",
+    "cancel": "Cancel",
+    "create": "Create song",
+    "creating": "Creating…"
+  },
+  "songEdit": {
+    "loading": "Loading…",
+    "notFound": "Song not found.",
+    "deleteSong": "Delete song",
+    "sections": "Sections",
+    "addSection": "Add section",
+    "noSections": "No sections yet.",
+    "addFirstSection": "Add the first section",
+    "confirmDelete": "Delete \"{{title}}\"? This cannot be undone."
+  },
+  "songForm": {
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g. Sommaren är kort",
+    "creditLabel": "Credit",
+    "creditPlaceholder": "e.g. Astrid Lindgren · Georg Riedel",
+    "originalLabel": "Original title",
+    "originalPlaceholder": "e.g. A Whole New World",
+    "columnsLabel": "Print columns"
+  },
+  "sectionEditor": {
+    "dragToReorder": "Drag to reorder",
+    "deleteSection": "Delete section",
+    "confirmDelete": "Delete this section?",
+    "labelPlaceholder": "Section label (e.g. Verse, Chorus…)",
+    "lyricsPlaceholder": "Lyrics…",
+    "saving": "saving…",
+    "chords": "Chords",
+    "chordLineNum": "#",
+    "chordLinePreview": "Line preview",
+    "chordLabel": "Chord",
+    "chordPlaceholder": "e.g. C  F  G7",
+    "addChord": "Add chord"
+  },
+  "printView": {
+    "loading": "Loading…",
+    "printBtn": "Print / Save PDF",
+    "coverSubtitle": "A collection of songs",
+    "coverTitle": "Our Songs",
+    "coverCredit": "Disney & Camp Glöd 2025",
+    "styles": {
+      "standard": "Standard",
+      "standardSub": "A4 · one song per page",
+      "compact": "Compact",
+      "compactSub": "A4 · multiple songs per page",
+      "booklet": "Booklet",
+      "bookletSub": "A5 · fold & staple",
+      "cards": "Cards",
+      "cardsSub": "A4 · credit card size · fold & laminate"
+    },
+    "presets": {
+      "klassisk": "Classic",
+      "klassiskSub": "Warm & traditional",
+      "tidning": "Newspaper",
+      "tidningSub": "Editorial",
+      "nordisk": "Nordic",
+      "nordiskSub": "Cool & minimal",
+      "mork": "Dark",
+      "morkSub": "Nocturnal & elegant",
+      "pastoral": "Pastoral",
+      "pastoralSub": "Natural & warm"
+    }
+  }
+}

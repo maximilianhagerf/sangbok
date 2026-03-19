@@ -13,6 +13,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { useTranslation } from 'react-i18next';
 import * as api from '../api';
 import type { Section } from '../types';
 import SectionEditor from './SectionEditor';
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export default function SectionList({ songId, sections, onChange }: Props) {
+  const { t } = useTranslation();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -48,7 +50,7 @@ export default function SectionList({ songId, sections, onChange }: Props) {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm('Delete this section?')) return;
+    if (!confirm(t('sectionEditor.confirmDelete'))) return;
     await api.deleteSection(id);
     onChange(sections.filter((s) => s.id !== id));
   }

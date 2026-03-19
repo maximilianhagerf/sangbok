@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "allSongs": "Alla sånger",
+    "printView": "Utskriftsvy"
+  },
+  "songList": {
+    "heading": "Sångbok",
+    "songCount": "{{count}} sång",
+    "songCount_other": "{{count}} sånger",
+    "newSong": "Ny sång",
+    "noSongs": "Inga sånger ännu.",
+    "addFirst": "Lägg till den första"
+  },
+  "bulkBar": {
+    "selected": "valda",
+    "selectAll": "Välj alla",
+    "deselectAll": "Avmarkera alla",
+    "delete": "Ta bort {{count}}",
+    "deleting": "Tar bort…",
+    "confirmDelete": "Ta bort {{count}} sång? Det går inte att ångra.",
+    "confirmDelete_other": "Ta bort {{count}} sånger? Det går inte att ångra."
+  },
+  "songModal": {
+    "title": "Ny sång",
+    "cancel": "Avbryt",
+    "create": "Skapa sång",
+    "creating": "Skapar…"
+  },
+  "songEdit": {
+    "loading": "Laddar…",
+    "notFound": "Sången hittades inte.",
+    "deleteSong": "Ta bort sång",
+    "sections": "Avsnitt",
+    "addSection": "Lägg till avsnitt",
+    "noSections": "Inga avsnitt ännu.",
+    "addFirstSection": "Lägg till det första avsnittet",
+    "confirmDelete": "Ta bort \"{{title}}\"? Det går inte att ångra."
+  },
+  "songForm": {
+    "titleLabel": "Titel",
+    "titlePlaceholder": "t.ex. Sommaren är kort",
+    "creditLabel": "Upphovsman",
+    "creditPlaceholder": "t.ex. Astrid Lindgren · Georg Riedel",
+    "originalLabel": "Originaltitel",
+    "originalPlaceholder": "t.ex. A Whole New World",
+    "columnsLabel": "Kolumner vid utskrift"
+  },
+  "sectionEditor": {
+    "dragToReorder": "Dra för att ordna om",
+    "deleteSection": "Ta bort avsnitt",
+    "confirmDelete": "Ta bort detta avsnitt?",
+    "labelPlaceholder": "Avsnittsnamn (t.ex. Vers, Refräng…)",
+    "lyricsPlaceholder": "Text…",
+    "saving": "sparar…",
+    "chords": "Ackord",
+    "chordLineNum": "#",
+    "chordLinePreview": "Förhandsgranskning",
+    "chordLabel": "Ackord",
+    "chordPlaceholder": "t.ex. C  F  G7",
+    "addChord": "Lägg till ackord"
+  },
+  "printView": {
+    "loading": "Laddar…",
+    "printBtn": "Skriv ut / Spara PDF",
+    "coverSubtitle": "En samling sånger",
+    "coverTitle": "Våra Sånger",
+    "coverCredit": "Disney & Camp Glöd 2025",
+    "styles": {
+      "standard": "Standard",
+      "standardSub": "A4 · en sång per sida",
+      "compact": "Kompakt",
+      "compactSub": "A4 · flera sånger per sida",
+      "booklet": "Fickhäfte",
+      "bookletSub": "A5 · vik & häfta",
+      "cards": "Kort",
+      "cardsSub": "A4 · kreditkortstorlek · vik & laminera"
+    },
+    "presets": {
+      "klassisk": "Klassisk",
+      "klassiskSub": "Varm & traditionell",
+      "tidning": "Tidning",
+      "tidningSub": "Redaktionell",
+      "nordisk": "Nordisk",
+      "nordiskSub": "Kylig & minimal",
+      "mork": "Mörk",
+      "morkSub": "Nattlig & elegant",
+      "pastoral": "Pastoral",
+      "pastoralSub": "Naturlig & varm"
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ChevronDown, ChevronRight, GripVertical, Plus, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as api from '../api';
 import type { Section } from '../types';
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
+  const { t } = useTranslation();
   const [label, setLabel] = useState(section.label ?? '');
   const [content, setContent] = useState(section.content);
   const [chords, setChords] = useState(section.chords);
@@ -95,7 +97,7 @@ export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
           {...attributes}
           {...listeners}
           className="text-stone-400 hover:text-stone-600 cursor-grab active:cursor-grabbing touch-none"
-          aria-label="Drag to reorder"
+          aria-label={t('sectionEditor.dragToReorder')}
         >
           <GripVertical size={16} />
         </button>
@@ -104,17 +106,17 @@ export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
           type="text"
           value={label}
           onChange={(e) => handleLabelChange(e.target.value)}
-          placeholder="Section label (e.g. Vers, Refräng…)"
+          placeholder={t('sectionEditor.labelPlaceholder')}
           className="flex-1 text-sm font-medium bg-transparent text-stone-700 placeholder-stone-400 outline-none min-w-0"
         />
 
-        {saving && <span className="text-xs text-stone-400">saving…</span>}
+        {saving && <span className="text-xs text-stone-400">{t('sectionEditor.saving')}</span>}
 
         <button
           type="button"
           onClick={() => onDelete(section.id)}
           className="text-stone-400 hover:text-rose-500 transition-colors"
-          aria-label="Delete section"
+          aria-label={t('sectionEditor.deleteSection')}
         >
           <Trash2 size={15} />
         </button>
@@ -126,7 +128,7 @@ export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
         onChange={(e) => handleContentChange(e.target.value)}
         rows={Math.max(3, lines.length + 1)}
         className="w-full px-4 py-3 text-sm font-['EB_Garamond',Georgia,serif] text-stone-800 resize-none outline-none leading-relaxed"
-        placeholder="Lyrics…"
+        placeholder={t('sectionEditor.lyricsPlaceholder')}
       />
 
       {/* Chords panel */}
@@ -137,16 +139,16 @@ export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
           className="flex items-center gap-1.5 px-4 py-2 text-xs text-stone-500 hover:text-stone-700 transition-colors w-full text-left"
         >
           {chordsOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-          Chords{' '}
+          {t('sectionEditor.chords')}{' '}
           {chords.length > 0 && <span className="ml-1 text-amber-600">({chords.length})</span>}
         </button>
 
         {chordsOpen && (
           <div className="px-4 pb-3 space-y-1.5">
             <div className="grid grid-cols-[1.5rem_1fr_2fr_1.5rem] gap-2 text-xs text-stone-500 font-medium mb-1">
-              <span>#</span>
-              <span>Line preview</span>
-              <span>Chord</span>
+              <span>{t('sectionEditor.chordLineNum')}</span>
+              <span>{t('sectionEditor.chordLinePreview')}</span>
+              <span>{t('sectionEditor.chordLabel')}</span>
               <span></span>
             </div>
             {chords.map(({ line, chord }) => (
@@ -160,7 +162,7 @@ export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
                   value={chord}
                   onChange={(e) => updateChord(line, e.target.value)}
                   className="text-xs border border-stone-200 rounded px-2 py-0.5 font-mono text-amber-700 outline-none focus:border-amber-400"
-                  placeholder="e.g. C  F  G7"
+                  placeholder={t('sectionEditor.chordPlaceholder')}
                 />
                 <button
                   type="button"
@@ -176,7 +178,7 @@ export default function SectionEditor({ section, onUpdate, onDelete }: Props) {
               onClick={addChord}
               className="flex items-center gap-1 text-xs text-stone-500 hover:text-amber-700 transition-colors mt-1"
             >
-              <Plus size={12} /> Add chord
+              <Plus size={12} /> {t('sectionEditor.addChord')}
             </button>
           </div>
         )}

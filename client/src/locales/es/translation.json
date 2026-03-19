@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "allSongs": "Todas las canciones",
+    "printView": "Vista de impresión"
+  },
+  "songList": {
+    "heading": "Cancionero",
+    "songCount": "{{count}} canción",
+    "songCount_other": "{{count}} canciones",
+    "newSong": "Nueva canción",
+    "noSongs": "Aún no hay canciones.",
+    "addFirst": "Añade la primera"
+  },
+  "bulkBar": {
+    "selected": "seleccionadas",
+    "selectAll": "Seleccionar todas",
+    "deselectAll": "Deseleccionar todas",
+    "delete": "Eliminar {{count}}",
+    "deleting": "Eliminando…",
+    "confirmDelete": "¿Eliminar {{count}} canción? Esta acción no se puede deshacer.",
+    "confirmDelete_other": "¿Eliminar {{count}} canciones? Esta acción no se puede deshacer."
+  },
+  "songModal": {
+    "title": "Nueva canción",
+    "cancel": "Cancelar",
+    "create": "Crear canción",
+    "creating": "Creando…"
+  },
+  "songEdit": {
+    "loading": "Cargando…",
+    "notFound": "Canción no encontrada.",
+    "deleteSong": "Eliminar canción",
+    "sections": "Secciones",
+    "addSection": "Añadir sección",
+    "noSections": "Aún no hay secciones.",
+    "addFirstSection": "Añade la primera sección",
+    "confirmDelete": "¿Eliminar «{{title}}»? Esta acción no se puede deshacer."
+  },
+  "songForm": {
+    "titleLabel": "Título",
+    "titlePlaceholder": "p. ej. Sommaren är kort",
+    "creditLabel": "Crédito",
+    "creditPlaceholder": "p. ej. Astrid Lindgren · Georg Riedel",
+    "originalLabel": "Título original",
+    "originalPlaceholder": "p. ej. A Whole New World",
+    "columnsLabel": "Columnas de impresión"
+  },
+  "sectionEditor": {
+    "dragToReorder": "Arrastrar para reordenar",
+    "deleteSection": "Eliminar sección",
+    "confirmDelete": "¿Eliminar esta sección?",
+    "labelPlaceholder": "Nombre de sección (p. ej. Verso, Estribillo…)",
+    "lyricsPlaceholder": "Letra…",
+    "saving": "guardando…",
+    "chords": "Acordes",
+    "chordLineNum": "#",
+    "chordLinePreview": "Vista previa",
+    "chordLabel": "Acorde",
+    "chordPlaceholder": "p. ej. C  F  G7",
+    "addChord": "Añadir acorde"
+  },
+  "printView": {
+    "loading": "Cargando…",
+    "printBtn": "Imprimir / Guardar PDF",
+    "coverSubtitle": "Una colección de canciones",
+    "coverTitle": "Nuestras Canciones",
+    "coverCredit": "Disney & Camp Glöd 2025",
+    "styles": {
+      "standard": "Estándar",
+      "standardSub": "A4 · una canción por página",
+      "compact": "Compacto",
+      "compactSub": "A4 · varias canciones por página",
+      "booklet": "Cuadernillo",
+      "bookletSub": "A5 · doblar y grapar",
+      "cards": "Tarjetas",
+      "cardsSub": "A4 · tamaño tarjeta · doblar y laminar"
+    },
+    "presets": {
+      "klassisk": "Clásico",
+      "klassiskSub": "Cálido y tradicional",
+      "tidning": "Periódico",
+      "tidningSub": "Editorial",
+      "nordisk": "Nórdico",
+      "nordiskSub": "Frío y minimalista",
+      "mork": "Oscuro",
+      "morkSub": "Nocturno y elegante",
+      "pastoral": "Pastoral",
+      "pastoralSub": "Natural y cálido"
+    }
+  }
+}

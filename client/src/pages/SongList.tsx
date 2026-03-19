@@ -17,8 +17,10 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Pencil, Plus, Printer, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import * as api from '../api';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import type { Song } from '../types';
 
 // ─── New Song Modal ───────────────────────────────────────────────────────────
@@ -29,6 +31,7 @@ interface NewSongModalProps {
 }
 
 function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [credit, setCredit] = useState('');
   const [original, setOriginal] = useState('');
@@ -79,7 +82,7 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-stone-100">
           <h2 className="font-['Cormorant_Garamond'] text-xl font-medium text-stone-800">
-            New song
+            {t('songModal.title')}
           </h2>
           <button
             type="button"
@@ -97,7 +100,7 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
               htmlFor="modal-title"
               className="block text-xs font-medium text-stone-500 mb-1.5"
             >
-              Title <span className="text-rose-400">*</span>
+              {t('songForm.titleLabel')} <span className="text-rose-400">*</span>
             </label>
             <input
               id="modal-title"
@@ -105,7 +108,7 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Sommaren är kort"
+              placeholder={t('songForm.titlePlaceholder')}
               className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-800 outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition"
             />
           </div>
@@ -116,14 +119,14 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
               htmlFor="modal-credit"
               className="block text-xs font-medium text-stone-500 mb-1.5"
             >
-              Credit
+              {t('songForm.creditLabel')}
             </label>
             <input
               id="modal-credit"
               type="text"
               value={credit}
               onChange={(e) => setCredit(e.target.value)}
-              placeholder="e.g. Astrid Lindgren · Georg Riedel"
+              placeholder={t('songForm.creditPlaceholder')}
               className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-700 outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition placeholder-stone-300"
             />
           </div>
@@ -134,22 +137,22 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
               htmlFor="modal-original"
               className="block text-xs font-medium text-stone-500 mb-1.5"
             >
-              Original title
+              {t('songForm.originalLabel')}
             </label>
             <input
               id="modal-original"
               type="text"
               value={original}
               onChange={(e) => setOriginal(e.target.value)}
-              placeholder="e.g. A Whole New World"
+              placeholder={t('songForm.originalPlaceholder')}
               className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-700 outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition placeholder-stone-300"
             />
           </div>
 
           {/* Columns */}
           <div>
-            <p className="block text-xs font-medium text-stone-500 mb-1.5">Print columns</p>
-            <div className="flex gap-2" role="radiogroup" aria-label="Print columns">
+            <p className="block text-xs font-medium text-stone-500 mb-1.5">{t('songForm.columnsLabel')}</p>
+            <div className="flex gap-2" role="radiogroup" aria-label={t('songForm.columnsLabel')}>
               {([1, 2, 3] as const).map((col) => (
                 <button
                   key={col}
@@ -174,14 +177,14 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
               onClick={onClose}
               className="flex-1 py-2 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
             >
-              Cancel
+              {t('songModal.cancel')}
             </button>
             <button
               type="submit"
               disabled={!title.trim() || saving}
               className="flex-1 py-2 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {saving ? 'Creating…' : 'Create song'}
+              {saving ? t('songModal.creating') : t('songModal.create')}
             </button>
           </div>
         </form>
@@ -300,10 +303,11 @@ interface BulkBarProps {
 }
 
 function BulkBar({ count, total, onSelectAll, onClear, onDelete, deleting }: BulkBarProps) {
+  const { t } = useTranslation();
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-3 bg-stone-900 text-white rounded-2xl shadow-2xl shadow-stone-900/30 text-sm">
       <span className="text-stone-300 tabular-nums">
-        <span className="text-white font-medium">{count}</span> selected
+        <span className="text-white font-medium">{count}</span> {t('bulkBar.selected')}
       </span>
 
       <div className="w-px h-4 bg-stone-700" />
@@ -314,7 +318,7 @@ function BulkBar({ count, total, onSelectAll, onClear, onDelete, deleting }: Bul
           onClick={onSelectAll}
           className="text-stone-300 hover:text-white transition-colors"
         >
-          Select all
+          {t('bulkBar.selectAll')}
         </button>
       ) : (
         <button
@@ -322,7 +326,7 @@ function BulkBar({ count, total, onSelectAll, onClear, onDelete, deleting }: Bul
           onClick={onClear}
           className="text-stone-300 hover:text-white transition-colors"
         >
-          Deselect all
+          {t('bulkBar.deselectAll')}
         </button>
       )}
 
@@ -335,7 +339,7 @@ function BulkBar({ count, total, onSelectAll, onClear, onDelete, deleting }: Bul
         className="flex items-center gap-1.5 text-rose-400 hover:text-rose-300 transition-colors disabled:opacity-50"
       >
         <Trash2 size={14} />
-        {deleting ? 'Deleting…' : `Delete ${count}`}
+        {deleting ? t('bulkBar.deleting') : t('bulkBar.delete', { count })}
       </button>
 
       <div className="w-px h-4 bg-stone-700" />
@@ -351,9 +355,11 @@ function BulkBar({ count, total, onSelectAll, onClear, onDelete, deleting }: Bul
   );
 }
 
+
 // ─── SongList Page ────────────────────────────────────────────────────────────
 
 export default function SongList() {
+  const { t } = useTranslation();
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -394,9 +400,7 @@ export default function SongList() {
 
   async function handleBulkDelete() {
     if (
-      !confirm(
-        `Delete ${selected.size} song${selected.size !== 1 ? 's' : ''}? This cannot be undone.`,
-      )
+      !confirm(t('bulkBar.confirmDelete', { count: selected.size }))
     )
       return;
     setDeleting(true);
@@ -411,7 +415,7 @@ export default function SongList() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">Loading…</div>
+      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">{t('songEdit.loading')}</div>
     );
   }
 
@@ -421,9 +425,9 @@ export default function SongList() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-['Cormorant_Garamond'] text-3xl font-light text-stone-800">
-            Sångbok
+            {t('songList.heading')}
           </h1>
-          <p className="text-sm text-stone-400 mt-0.5">{songs.length} sånger</p>
+          <p className="text-sm text-stone-400 mt-0.5">{t('songList.songCount', { count: songs.length })}</p>
         </div>
         <div className="flex items-center gap-2">
           <a
@@ -432,14 +436,15 @@ export default function SongList() {
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
             rel="noopener"
           >
-            <Printer size={14} /> Print view
+            <Printer size={14} /> {t('nav.printView')}
           </a>
+          <LanguageSwitcher />
           <button
             type="button"
             onClick={() => setShowModal(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
           >
-            <Plus size={14} /> New song
+            <Plus size={14} /> {t('songList.newSong')}
           </button>
         </div>
       </div>
@@ -463,13 +468,13 @@ export default function SongList() {
 
       {songs.length === 0 && (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-sm">No songs yet.</p>
+          <p className="text-sm">{t('songList.noSongs')}</p>
           <button
             type="button"
             onClick={() => setShowModal(true)}
             className="mt-2 text-sm underline hover:text-stone-600"
           >
-            Add the first one
+            {t('songList.addFirst')}
           </button>
         </div>
       )}

@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as api from '../api';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import type { Section, Song } from '../types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PrintStyle = 'standard' | 'compact' | 'booklet' | 'cards';
 
-const STYLE_LABELS: Record<PrintStyle, { label: string; sub: string }> = {
-  standard: { label: 'Standard',   sub: 'A4 · en sång per sida' },
-  compact:  { label: 'Kompakt',    sub: 'A4 · flera sånger per sida' },
-  booklet:  { label: 'Fickhäfte',  sub: 'A5 · vik & häfta' },
-  cards:    { label: 'Kort',       sub: 'A4 · kreditkortstorlek · vik & laminera' },
+const STYLE_KEYS: Record<PrintStyle, { label: string; sub: string }> = {
+  standard: { label: 'printView.styles.standard', sub: 'printView.styles.standardSub' },
+  compact:  { label: 'printView.styles.compact',  sub: 'printView.styles.compactSub' },
+  booklet:  { label: 'printView.styles.booklet',  sub: 'printView.styles.bookletSub' },
+  cards:    { label: 'printView.styles.cards',    sub: 'printView.styles.cardsSub' },
 };
 
 // ─── Style presets ────────────────────────────────────────────────────────────
@@ -395,7 +397,18 @@ const BASE_CSS = `
     cursor: pointer; font-family: sans-serif; box-shadow: 0 4px 20px rgba(0,0,0,.2); z-index: 100; }
   .print-btn:hover { background: #333; }
 
-  @media print { .style-switcher, .preset-panel, .print-btn { display: none !important; } }
+  .lang-switcher { position: fixed; top: 1.5rem; right: 2rem; z-index: 100;
+    display: flex; gap: 0.375rem; align-items: center;
+    background: #1E1B18; backdrop-filter: blur(8px);
+    padding: 0.375rem 0.5rem; border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .lang-switcher button { all: unset; cursor: pointer; font-family: sans-serif;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em;
+    padding: 0.4rem 0.75rem; border-radius: 7px; transition: all 0.15s ease;
+    color: rgba(255,255,255,0.45); }
+  .lang-switcher button:hover { color: #F8F5EF; background: rgba(255,255,255,0.1); }
+  .lang-switcher button[data-active] { background: rgba(255,255,255,0.15); color: #F8F5EF; }
+  @media print { .style-switcher, .preset-panel, .print-btn, .lang-switcher { display: none !important; } }
 `;
 
 const STANDARD_CSS = `
@@ -582,17 +595,18 @@ function StyleSwitcher({
   current: PrintStyle;
   onChange: (s: PrintStyle) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="style-switcher">
-      {(Object.keys(STYLE_LABELS) as PrintStyle[]).map((s) => (
+      {(Object.keys(STYLE_KEYS) as PrintStyle[]).map((s) => (
         <button
           key={s}
           type="button"
           className={`style-btn ${current === s ? 'active' : ''}`}
           onClick={() => onChange(s)}
         >
-          <span className="btn-label">{STYLE_LABELS[s].label}</span>
-          <span className="btn-sub">{STYLE_LABELS[s].sub}</span>
+          <span className="btn-label">{t(STYLE_KEYS[s].label)}</span>
+          <span className="btn-sub">{t(STYLE_KEYS[s].sub)}</span>
         </button>
       ))}
     </div>
@@ -602,6 +616,7 @@ function StyleSwitcher({
 // ─── Preset panel ─────────────────────────────────────────────────────────────
 
 function PresetPanel({ current, onChange }: { current: string; onChange: (id: string) => void }) {
+  const { t } = useTranslation();
   return (
     <div className="preset-panel">
       {PRESETS.map((p) => (
@@ -617,8 +632,8 @@ function PresetPanel({ current, onChange }: { current: string; onChange: (id: st
             ))}
           </div>
           <div>
-            <span className="preset-name">{p.name}</span>
-            <span className="preset-sub">{p.sub}</span>
+            <span className="preset-name">{t(`printView.presets.${p.id}`)}</span>
+            <span className="preset-sub">{t(`printView.presets.${p.id}Sub`)}</span>
           </div>
         </button>
       ))}
@@ -629,6 +644,7 @@ function PresetPanel({ current, onChange }: { current: string; onChange: (id: st
 // ─── Cover ────────────────────────────────────────────────────────────────────
 
 function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
+  const { t } = useTranslation();
   const isBooklet = style === 'booklet';
   return (
     <div
@@ -643,19 +659,19 @@ function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
     >
       <p style={{ fontSize: isBooklet ? '0.58rem' : '0.68rem', letterSpacing: '0.22em',
         textTransform: 'uppercase', color: 'var(--gold)', marginBottom: isBooklet ? '4mm' : '6mm' }}>
-        En samling sånger
+        {t('printView.coverSubtitle')}
       </p>
       <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
         marginBottom: isBooklet ? '5mm' : '8mm' }} />
       <h1 style={{ fontFamily: 'var(--font-head)', fontSize: isBooklet ? '3rem' : '4.5rem',
         fontWeight: 300, lineHeight: 1.05, color: 'var(--ink)',
         marginBottom: isBooklet ? '4mm' : '6mm' }}>
-        Våra<br /><em>Sånger</em>
+        {t('printView.coverTitle')}
       </h1>
       <p style={{ fontSize: isBooklet ? '0.62rem' : '0.72rem', letterSpacing: '0.18em',
         textTransform: 'uppercase', color: 'var(--ink-soft)',
         marginBottom: isBooklet ? '5mm' : '8mm' }}>
-        Disney &amp; Camp Glöd 2025
+        {t('printView.coverCredit')}
       </p>
       <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
         marginBottom: isBooklet ? '6mm' : '10mm' }} />
@@ -671,6 +687,7 @@ function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
 // ─── PrintView ────────────────────────────────────────────────────────────────
 
 export default function PrintView() {
+  const { t } = useTranslation();
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [printStyle, setPrintStyle] = useState<PrintStyle>('standard');
@@ -681,7 +698,7 @@ export default function PrintView() {
     api.getSongs().then(setSongs).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>Loading…</div>;
+  if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>{t('printView.loading')}</div>;
 
   // Build card data (songs split into fold-over credit cards, with continuation cards for long songs)
   const allCards = buildCardData(songs);
@@ -718,8 +735,11 @@ export default function PrintView() {
         </>
       )}
 
+      <div className="lang-switcher">
+        <LanguageSwitcher />
+      </div>
       <button type="button" className="print-btn" onClick={() => window.print()}>
-        Print / Save PDF
+        {t('printView.printBtn')}
       </button>
     </>
   );
