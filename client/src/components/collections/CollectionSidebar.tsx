@@ -72,8 +72,7 @@ export default function CollectionSidebar({
         const isEditing = editingId === col.id;
 
         return (
-          // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled via onKeyDown
-          // biome-ignore lint/a11y/noStaticElementInteractions: div with role="button" used to allow button children
+          // biome-ignore lint/a11y/useSemanticElements: div used instead of button to allow nested button children
           <div
             key={col.id}
             role="button"
@@ -84,7 +83,9 @@ export default function CollectionSidebar({
                 : 'bg-white border-stone-200 hover:border-stone-300 hover:shadow-sm'
             }`}
             onClick={() => !isEditing && onSwitch(col.id)}
-            onKeyDown={(e) => !isEditing && (e.key === 'Enter' || e.key === ' ') && onSwitch(col.id)}
+            onKeyDown={(e) =>
+              !isEditing && (e.key === 'Enter' || e.key === ' ') && onSwitch(col.id)
+            }
           >
             <div className="px-4 py-3">
               {/* Name row */}
@@ -127,9 +128,7 @@ export default function CollectionSidebar({
               )}
 
               {/* Song count */}
-              <div
-                className="flex items-center gap-1 mt-2 text-xs text-stone-400"
-              >
+              <div className="flex items-center gap-1 mt-2 text-xs text-stone-400">
                 <Music size={11} />
                 <span>{t('songList.songCount', { count: col.song_count ?? 0 })}</span>
               </div>

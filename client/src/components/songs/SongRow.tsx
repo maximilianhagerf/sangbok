@@ -27,22 +27,8 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
         transition,
         opacity: isDragging ? 0.4 : 1,
       }}
-      className="relative group flex items-center pl-6"
+      className="group"
     >
-      {/* Checkbox — floats to the left of the card */}
-      <div
-        className={`absolute -left-6 flex items-center justify-center transition-opacity ${
-          selecting ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-        }`}
-      >
-        <input
-          type="checkbox"
-          checked={selected}
-          onChange={() => onToggle(song.id)}
-          className="w-4 h-4 cursor-pointer accent-stone-800"
-        />
-      </div>
-
       {/* Song card */}
       {/* biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set when selecting */}
       <div
@@ -54,7 +40,39 @@ export default function SongRow({ song, selected, selecting, onToggle }: SongRow
           selected ? 'border-stone-400 bg-stone-50' : 'border-stone-200 hover:border-stone-300'
         } ${selecting ? 'cursor-pointer' : ''}`}
       >
-        {/* Drag handle */}
+        {/* Checkbox — always visible inside card */}
+        <label
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+          className="shrink-0 cursor-pointer"
+          aria-label="Select song"
+        >
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggle(song.id)}
+            className="sr-only"
+          />
+          <span
+            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+              selected ? 'bg-stone-800 border-stone-800' : 'border-stone-300 hover:border-stone-400'
+            }`}
+          >
+            {selected && (
+              <svg width="8" height="6" viewBox="0 0 8 6" fill="none" aria-hidden="true">
+                <path
+                  d="M1 3L3 5L7 1"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </span>
+        </label>
+
+        {/* Drag handle — hidden when selecting */}
         {!selecting && (
           <button
             type="button"
