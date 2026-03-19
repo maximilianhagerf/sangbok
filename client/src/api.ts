@@ -1,4 +1,4 @@
-import type { Section, Song } from './types';
+import type { Section, Settings, Song } from './types';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -21,6 +21,11 @@ export const updateSong = (id: number, body: Partial<Song>) =>
 export const deleteSong = (id: number) => request<void>(`/api/songs/${id}`, { method: 'DELETE' });
 export const reorderSongs = (ids: number[]) =>
   request<void>('/api/songs/reorder', { method: 'PATCH', body: JSON.stringify({ ids }) });
+
+// Settings
+export const getSettings = () => request<Settings>('/api/settings');
+export const updateSettings = (body: Settings) =>
+  request<Settings>('/api/settings', { method: 'PUT', body: JSON.stringify(body) });
 
 // Sections
 export const createSection = (songId: number, body: Partial<Section>) =>

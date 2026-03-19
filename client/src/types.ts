@@ -1,3 +1,9 @@
+export interface Settings {
+  cover_title: string;
+  cover_subtitle: string;
+  cover_credit: string;
+}
+
 export interface ChordMark {
   line: number;
   chord: string;

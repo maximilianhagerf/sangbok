@@ -15,13 +15,13 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Pencil, Plus, Printer, Trash2, X } from 'lucide-react';
+import { GripVertical, Pencil, Plus, Printer, Settings, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import * as api from '../api';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import type { Song } from '../types';
+import type { Settings as AppSettings, Song } from '../types';
 
 // ─── New Song Modal ───────────────────────────────────────────────────────────
 
@@ -365,6 +365,13 @@ export default function SongList() {
   const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [deleting, setDeleting] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState<AppSettings>({
+    cover_title: '',
+    cover_subtitle: '',
+    cover_credit: '',
+  });
+  const [settingsSaving, setSettingsSaving] = useState(false);
 
   const selecting = selected.size > 0;
 
@@ -378,7 +385,20 @@ export default function SongList() {
       .getSongs()
       .then(setSongs)
       .finally(() => setLoading(false));
+    api.getSettings().then(setSettings);
   }, []);
+
+  async function handleSaveSettings(e: React.FormEvent) {
+    e.preventDefault();
+    setSettingsSaving(true);
+    try {
+      const saved = await api.updateSettings(settings);
+      setSettings(saved);
+      setShowSettings(false);
+    } finally {
+      setSettingsSaving(false);
+    }
+  }
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -441,6 +461,14 @@ export default function SongList() {
           <LanguageSwitcher />
           <button
             type="button"
+            onClick={() => setShowSettings((v) => !v)}
+            className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-stone-100 text-stone-800' : 'text-stone-400 hover:text-stone-700 hover:bg-stone-50'}`}
+            title={t('coverSettings.title')}
+          >
+            <Settings size={16} />
+          </button>
+          <button
+            type="button"
             onClick={() => setShowModal(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
           >
@@ -448,6 +476,65 @@ export default function SongList() {
           </button>
         </div>
       </div>
+
+      {/* Cover settings panel */}
+      {showSettings && (
+        <form
+          onSubmit={handleSaveSettings}
+          className="mb-6 p-4 border border-stone-200 rounded-xl bg-stone-50 space-y-3"
+        >
+          <p className="text-xs font-medium text-stone-500 uppercase tracking-wider">{t('coverSettings.title')}</p>
+          <div>
+            <label className="block text-xs text-stone-500 mb-1">
+              {t('coverSettings.coverTitle')} <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={settings.cover_title}
+              onChange={(e) => setSettings((s) => ({ ...s, cover_title: e.target.value }))}
+              className="w-full px-3 py-1.5 text-sm border border-stone-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-stone-400"
+              placeholder={t('coverSettings.coverTitlePlaceholder')}
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-stone-500 mb-1">{t('coverSettings.coverSubtitle')}</label>
+            <input
+              type="text"
+              value={settings.cover_subtitle}
+              onChange={(e) => setSettings((s) => ({ ...s, cover_subtitle: e.target.value }))}
+              className="w-full px-3 py-1.5 text-sm border border-stone-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-stone-400"
+              placeholder={t('coverSettings.coverSubtitlePlaceholder')}
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-stone-500 mb-1">{t('coverSettings.coverCredit')}</label>
+            <input
+              type="text"
+              value={settings.cover_credit}
+              onChange={(e) => setSettings((s) => ({ ...s, cover_credit: e.target.value }))}
+              className="w-full px-3 py-1.5 text-sm border border-stone-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-stone-400"
+              placeholder={t('coverSettings.coverCreditPlaceholder')}
+            />
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button
+              type="submit"
+              disabled={settingsSaving}
+              className="px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 disabled:opacity-50 transition-colors"
+            >
+              {settingsSaving ? t('coverSettings.saving') : t('coverSettings.save')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowSettings(false)}
+              className="px-3 py-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors"
+            >
+              {t('songModal.cancel')}
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* List */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

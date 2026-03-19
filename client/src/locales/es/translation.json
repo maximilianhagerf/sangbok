@@ -59,6 +59,17 @@
     "chordPlaceholder": "p. ej. C  F  G7",
     "addChord": "Añadir acorde"
   },
+  "coverSettings": {
+    "title": "Ajustes de portada",
+    "coverTitle": "Título",
+    "coverTitlePlaceholder": "p. ej. Nuestras Canciones",
+    "coverSubtitle": "Subtítulo",
+    "coverSubtitlePlaceholder": "p. ej. Una colección de canciones",
+    "coverCredit": "Línea de crédito",
+    "coverCreditPlaceholder": "p. ej. Disney & Camp Glöd 2025",
+    "save": "Guardar",
+    "saving": "Guardando…"
+  },
   "printView": {
     "loading": "Cargando…",
     "printBtn": "Imprimir / Guardar PDF",

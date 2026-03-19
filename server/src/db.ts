@@ -26,6 +26,17 @@ db.prepare(`CREATE TABLE IF NOT EXISTS sections (
   chords    TEXT
 )`).run();
 
+db.prepare(`CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT
+)`).run();
+
+// Seed defaults (only if not already set)
+const insertDefault = db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)`);
+insertDefault.run('cover_title', 'Våra Sånger');
+insertDefault.run('cover_subtitle', 'En samling sånger');
+insertDefault.run('cover_credit', 'Disney & Camp Glöd 2025');
+
 db.prepare(`CREATE INDEX IF NOT EXISTS idx_sections_song ON sections(song_id)`).run();
 db.prepare(`CREATE INDEX IF NOT EXISTS idx_songs_position ON songs(position)`).run();
 

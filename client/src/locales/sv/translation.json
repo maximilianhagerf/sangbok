@@ -59,6 +59,17 @@
     "chordPlaceholder": "t.ex. C  F  G7",
     "addChord": "Lägg till ackord"
   },
+  "coverSettings": {
+    "title": "Omslagsinställningar",
+    "coverTitle": "Titel",
+    "coverTitlePlaceholder": "t.ex. Våra Sånger",
+    "coverSubtitle": "Underrubrik",
+    "coverSubtitlePlaceholder": "t.ex. En samling sånger",
+    "coverCredit": "Kreditrad",
+    "coverCreditPlaceholder": "t.ex. Disney & Camp Glöd 2025",
+    "save": "Spara",
+    "saving": "Sparar…"
+  },
   "printView": {
     "loading": "Laddar…",
     "printBtn": "Skriv ut / Spara PDF",

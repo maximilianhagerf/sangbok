@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as api from '../api';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import type { Section, Song } from '../types';
+import type { Section, Settings, Song } from '../types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -643,8 +643,7 @@ function PresetPanel({ current, onChange }: { current: string; onChange: (id: st
 
 // ─── Cover ────────────────────────────────────────────────────────────────────
 
-function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
-  const { t } = useTranslation();
+function Cover({ songs, style, settings }: { songs: Song[]; style: PrintStyle; settings: Settings }) {
   const isBooklet = style === 'booklet';
   return (
     <div
@@ -657,22 +656,26 @@ function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
         textAlign: 'center',
       }}
     >
-      <p style={{ fontSize: isBooklet ? '0.58rem' : '0.68rem', letterSpacing: '0.22em',
-        textTransform: 'uppercase', color: 'var(--gold)', marginBottom: isBooklet ? '4mm' : '6mm' }}>
-        {t('printView.coverSubtitle')}
-      </p>
+      {settings.cover_subtitle && (
+        <p style={{ fontSize: isBooklet ? '0.58rem' : '0.68rem', letterSpacing: '0.22em',
+          textTransform: 'uppercase', color: 'var(--gold)', marginBottom: isBooklet ? '4mm' : '6mm' }}>
+          {settings.cover_subtitle}
+        </p>
+      )}
       <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
         marginBottom: isBooklet ? '5mm' : '8mm' }} />
       <h1 style={{ fontFamily: 'var(--font-head)', fontSize: isBooklet ? '3rem' : '4.5rem',
         fontWeight: 300, lineHeight: 1.05, color: 'var(--ink)',
         marginBottom: isBooklet ? '4mm' : '6mm' }}>
-        {t('printView.coverTitle')}
+        {settings.cover_title}
       </h1>
-      <p style={{ fontSize: isBooklet ? '0.62rem' : '0.72rem', letterSpacing: '0.18em',
-        textTransform: 'uppercase', color: 'var(--ink-soft)',
-        marginBottom: isBooklet ? '5mm' : '8mm' }}>
-        {t('printView.coverCredit')}
-      </p>
+      {settings.cover_credit && (
+        <p style={{ fontSize: isBooklet ? '0.62rem' : '0.72rem', letterSpacing: '0.18em',
+          textTransform: 'uppercase', color: 'var(--ink-soft)',
+          marginBottom: isBooklet ? '5mm' : '8mm' }}>
+          {settings.cover_credit}
+        </p>
+      )}
       <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
         marginBottom: isBooklet ? '6mm' : '10mm' }} />
       <ul style={{ columns: isBooklet ? 1 : 2, columnGap: '6mm', listStyle: 'none',
@@ -689,13 +692,16 @@ function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
 export default function PrintView() {
   const { t } = useTranslation();
   const [songs, setSongs] = useState<Song[]>([]);
+  const [settings, setSettings] = useState<Settings>({ cover_title: '', cover_subtitle: '', cover_credit: '' });
   const [loading, setLoading] = useState(true);
   const [printStyle, setPrintStyle] = useState<PrintStyle>('standard');
   const [presetId, setPresetId] = useState(PRESETS[0].id);
   const preset = PRESETS.find((p) => p.id === presetId) ?? PRESETS[0];
 
   useEffect(() => {
-    api.getSongs().then(setSongs).finally(() => setLoading(false));
+    Promise.all([api.getSongs(), api.getSettings()])
+      .then(([s, cfg]) => { setSongs(s); setSettings(cfg); })
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>{t('printView.loading')}</div>;
@@ -728,7 +734,7 @@ export default function PrintView() {
       ) : (
         // Standard + Booklet: each song gets its own page
         <>
-          <Cover songs={songs} style={printStyle} />
+          <Cover songs={songs} style={printStyle} settings={settings} />
           {songs.map((song, i) => (
             <SongPage key={song.id} song={song} index={i} />
           ))}
