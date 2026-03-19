@@ -1,4 +1,5 @@
 import express from 'express';
+import collectionsRouter from './routes/collections';
 import sectionsRouter from './routes/sections';
 import settingsRouter from './routes/settings';
 import songsRouter from './routes/songs';
@@ -8,6 +9,7 @@ const PORT = 3001;
 
 app.use(express.json());
 
+app.use('/api/collections', collectionsRouter);
 app.use('/api/songs', songsRouter);
 app.use('/api/sections', sectionsRouter);
 app.use('/api/settings', settingsRouter);

@@ -21,16 +21,17 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import * as api from '../api';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import type { Settings as AppSettings, Song } from '../types';
+import type { Collection, Settings as AppSettings, Song } from '../types';
 
 // ─── New Song Modal ───────────────────────────────────────────────────────────
 
 interface NewSongModalProps {
+  collectionId: number;
   onClose: () => void;
   onCreate: (song: Song) => void;
 }
 
-function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
+function NewSongModal({ collectionId, onClose, onCreate }: NewSongModalProps) {
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [credit, setCredit] = useState('');
@@ -53,7 +54,7 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
     if (!title.trim()) return;
     setSaving(true);
     try {
-      const song = await api.createSong({
+      const song = await api.createSong(collectionId, {
         title: title.trim(),
         credit: credit.trim() || undefined,
         original: original.trim() || undefined,
@@ -189,6 +190,156 @@ function NewSongModal({ onClose, onCreate }: NewSongModalProps) {
           </div>
         </form>
       </div>
+    </div>
+  );
+}
+
+// ─── Collection Switcher ──────────────────────────────────────────────────────
+
+interface CollectionSwitcherProps {
+  collections: Collection[];
+  activeId: number | null;
+  onSwitch: (id: number) => void;
+  onRename: (id: number, name: string) => void;
+  onDelete: (id: number) => void;
+  onCreate: (name: string) => void;
+}
+
+function CollectionSwitcher({
+  collections,
+  activeId,
+  onSwitch,
+  onRename,
+  onDelete,
+  onCreate,
+}: CollectionSwitcherProps) {
+  const { t } = useTranslation();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const [showNewInput, setShowNewInput] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [creating, setCreating] = useState(false);
+  const editRef = useRef<HTMLInputElement>(null);
+  const newRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingId !== null) editRef.current?.focus();
+  }, [editingId]);
+
+  useEffect(() => {
+    if (showNewInput) newRef.current?.focus();
+  }, [showNewInput]);
+
+  function startEdit(col: Collection) {
+    setEditingId(col.id);
+    setEditingName(col.name);
+  }
+
+  function commitEdit(id: number) {
+    if (editingName.trim()) onRename(id, editingName.trim());
+    setEditingId(null);
+    setEditingName('');
+  }
+
+  async function commitNew() {
+    if (!newName.trim()) { setShowNewInput(false); setNewName(''); return; }
+    setCreating(true);
+    try {
+      await onCreate(newName.trim());
+    } finally {
+      setCreating(false);
+      setShowNewInput(false);
+      setNewName('');
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap mb-6">
+      {collections.map((col) => (
+        <div key={col.id} className="relative group/pill flex items-center">
+          {editingId === col.id ? (
+            <input
+              ref={editRef}
+              type="text"
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+              onBlur={() => commitEdit(col.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitEdit(col.id);
+                if (e.key === 'Escape') { setEditingId(null); setEditingName(''); }
+              }}
+              className="px-3 py-1 text-sm border border-stone-400 rounded-full outline-none focus:ring-2 focus:ring-stone-200 bg-white text-stone-800 w-36"
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => onSwitch(col.id)}
+              className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+                activeId === col.id
+                  ? 'bg-stone-800 text-white border-stone-800'
+                  : 'text-stone-600 border-stone-200 hover:border-stone-400 bg-white'
+              }`}
+            >
+              {col.name}
+            </button>
+          )}
+
+          {/* Hover actions */}
+          {editingId !== col.id && (
+            <div className="absolute -top-1 -right-1 hidden group-hover/pill:flex items-center gap-0.5 bg-white border border-stone-200 rounded-full shadow-sm px-1 py-0.5 z-10">
+              <button
+                type="button"
+                title={t('collections.rename')}
+                onClick={() => startEdit(col)}
+                className="text-stone-400 hover:text-stone-700 transition-colors p-0.5"
+              >
+                <Pencil size={11} />
+              </button>
+              {collections.length > 1 && (
+                <button
+                  type="button"
+                  title={t('collections.delete')}
+                  onClick={() => {
+                    if (confirm(t('collections.confirmDelete', { name: col.name }))) {
+                      onDelete(col.id);
+                    }
+                  }}
+                  className="text-stone-400 hover:text-rose-500 transition-colors p-0.5"
+                >
+                  <Trash2 size={11} />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* New collection */}
+      {showNewInput ? (
+        <input
+          ref={newRef}
+          type="text"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          onBlur={commitNew}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') commitNew();
+            if (e.key === 'Escape') { setShowNewInput(false); setNewName(''); }
+          }}
+          placeholder={t('collections.namePlaceholder')}
+          disabled={creating}
+          className="px-3 py-1 text-sm border border-stone-400 rounded-full outline-none focus:ring-2 focus:ring-stone-200 bg-white text-stone-800 w-44 placeholder-stone-300 disabled:opacity-60"
+        />
+      ) : (
+        <button
+          type="button"
+          title={t('collections.new')}
+          onClick={() => setShowNewInput(true)}
+          className="w-7 h-7 flex items-center justify-center rounded-full border border-stone-200 text-stone-400 hover:text-stone-700 hover:border-stone-400 transition-colors bg-white"
+        >
+          <Plus size={14} />
+        </button>
+      )}
     </div>
   );
 }
@@ -373,6 +524,13 @@ export default function SongList() {
   });
   const [settingsSaving, setSettingsSaving] = useState(false);
 
+  // Collections
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [activeCollectionId, setActiveCollectionId] = useState<number | null>(() => {
+    const stored = localStorage.getItem('sangbok_collection');
+    return stored ? Number(stored) : null;
+  });
+
   const selecting = selected.size > 0;
 
   const sensors = useSensors(
@@ -380,19 +538,72 @@ export default function SongList() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
+  // Load collections on mount, then select appropriate one
   useEffect(() => {
-    api
-      .getSongs()
-      .then(setSongs)
-      .finally(() => setLoading(false));
-    api.getSettings().then(setSettings);
+    api.getCollections().then((cols) => {
+      setCollections(cols);
+      if (cols.length === 0) return;
+      const stored = localStorage.getItem('sangbok_collection');
+      const storedId = stored ? Number(stored) : null;
+      const match = storedId ? cols.find((c) => c.id === storedId) : null;
+      const id = match ? match.id : cols[0].id;
+      setActiveCollectionId(id);
+      localStorage.setItem('sangbok_collection', String(id));
+    });
   }, []);
+
+  // Reload songs and settings when activeCollectionId changes
+  useEffect(() => {
+    if (activeCollectionId === null) return;
+    setLoading(true);
+    Promise.all([
+      api.getSongs(activeCollectionId),
+      api.getSettings(activeCollectionId),
+    ])
+      .then(([s, cfg]) => {
+        setSongs(s);
+        setSettings(cfg);
+      })
+      .finally(() => setLoading(false));
+  }, [activeCollectionId]);
+
+  function switchCollection(id: number) {
+    setActiveCollectionId(id);
+    localStorage.setItem('sangbok_collection', String(id));
+    setSelected(new Set());
+    setShowSettings(false);
+  }
+
+  async function handleRenameCollection(id: number, name: string) {
+    const updated = await api.updateCollection(id, name);
+    setCollections((prev) => prev.map((c) => (c.id === id ? updated : c)));
+  }
+
+  async function handleDeleteCollection(id: number) {
+    try {
+      await api.deleteCollection(id);
+      const remaining = collections.filter((c) => c.id !== id);
+      setCollections(remaining);
+      if (activeCollectionId === id && remaining.length > 0) {
+        switchCollection(remaining[0].id);
+      }
+    } catch (err: any) {
+      alert(err.message ?? t('collections.lastCollection'));
+    }
+  }
+
+  async function handleCreateCollection(name: string) {
+    const col = await api.createCollection(name);
+    setCollections((prev) => [...prev, col]);
+    switchCollection(col.id);
+  }
 
   async function handleSaveSettings(e: React.FormEvent) {
     e.preventDefault();
+    if (activeCollectionId === null) return;
     setSettingsSaving(true);
     try {
-      const saved = await api.updateSettings(settings);
+      const saved = await api.updateSettings(activeCollectionId, settings);
       setSettings(saved);
       setShowSettings(false);
     } finally {
@@ -433,7 +644,7 @@ export default function SongList() {
     }
   }
 
-  if (loading) {
+  if (loading && activeCollectionId === null) {
     return (
       <div className="flex items-center justify-center h-64 text-stone-400 text-sm">{t('songEdit.loading')}</div>
     );
@@ -451,7 +662,7 @@ export default function SongList() {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href="/print"
+            href={'/print?c=' + activeCollectionId}
             target="_blank"
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
             rel="noopener"
@@ -476,6 +687,18 @@ export default function SongList() {
           </button>
         </div>
       </div>
+
+      {/* Collection switcher */}
+      {collections.length > 0 && (
+        <CollectionSwitcher
+          collections={collections}
+          activeId={activeCollectionId}
+          onSwitch={switchCollection}
+          onRename={handleRenameCollection}
+          onDelete={handleDeleteCollection}
+          onCreate={handleCreateCollection}
+        />
+      )}
 
       {/* Cover settings panel */}
       {showSettings && (
@@ -536,34 +759,43 @@ export default function SongList() {
         </form>
       )}
 
-      {/* List */}
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={songs.map((s) => s.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2 pl-8">
-            {songs.map((song) => (
-              <SongRow
-                key={song.id}
-                song={song}
-                selected={selected.has(song.id)}
-                selecting={selecting}
-                onToggle={handleToggle}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      {/* Loading indicator when switching collections */}
+      {loading && activeCollectionId !== null && (
+        <div className="flex items-center justify-center py-8 text-stone-400 text-sm">{t('songEdit.loading')}</div>
+      )}
 
-      {songs.length === 0 && (
-        <div className="text-center py-16 text-stone-400">
-          <p className="text-sm">{t('songList.noSongs')}</p>
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="mt-2 text-sm underline hover:text-stone-600"
-          >
-            {t('songList.addFirst')}
-          </button>
-        </div>
+      {/* List */}
+      {!loading && (
+        <>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={songs.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+              <div className="space-y-2 pl-8">
+                {songs.map((song) => (
+                  <SongRow
+                    key={song.id}
+                    song={song}
+                    selected={selected.has(song.id)}
+                    selecting={selecting}
+                    onToggle={handleToggle}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+
+          {songs.length === 0 && (
+            <div className="text-center py-16 text-stone-400">
+              <p className="text-sm">{t('songList.noSongs')}</p>
+              <button
+                type="button"
+                onClick={() => setShowModal(true)}
+                className="mt-2 text-sm underline hover:text-stone-600"
+              >
+                {t('songList.addFirst')}
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Bulk action bar */}
@@ -579,8 +811,9 @@ export default function SongList() {
       )}
 
       {/* New song modal */}
-      {showModal && (
+      {showModal && activeCollectionId !== null && (
         <NewSongModal
+          collectionId={activeCollectionId}
           onClose={() => setShowModal(false)}
           onCreate={(song) => {
             setSongs((prev) => [...prev, song]);

@@ -1,4 +1,4 @@
-import type { Section, Settings, Song } from './types';
+import type { Collection, Section, Settings, Song } from './types';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -11,11 +11,20 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
+// Collections
+export const getCollections = () => request<Collection[]>('/api/collections');
+export const createCollection = (name: string) =>
+  request<Collection>('/api/collections', { method: 'POST', body: JSON.stringify({ name }) });
+export const updateCollection = (id: number, name: string) =>
+  request<Collection>(`/api/collections/${id}`, { method: 'PUT', body: JSON.stringify({ name }) });
+export const deleteCollection = (id: number) =>
+  request<void>(`/api/collections/${id}`, { method: 'DELETE' });
+
 // Songs
-export const getSongs = () => request<Song[]>('/api/songs');
+export const getSongs = (collectionId: number) => request<Song[]>(`/api/songs?c=${collectionId}`);
 export const getSong = (id: number) => request<Song>(`/api/songs/${id}`);
-export const createSong = (body: Partial<Song>) =>
-  request<Song>('/api/songs', { method: 'POST', body: JSON.stringify(body) });
+export const createSong = (collectionId: number, body: Partial<Song>) =>
+  request<Song>('/api/songs', { method: 'POST', body: JSON.stringify({ ...body, collection_id: collectionId }) });
 export const updateSong = (id: number, body: Partial<Song>) =>
   request<Song>(`/api/songs/${id}`, { method: 'PUT', body: JSON.stringify(body) });
 export const deleteSong = (id: number) => request<void>(`/api/songs/${id}`, { method: 'DELETE' });
@@ -23,9 +32,9 @@ export const reorderSongs = (ids: number[]) =>
   request<void>('/api/songs/reorder', { method: 'PATCH', body: JSON.stringify({ ids }) });
 
 // Settings
-export const getSettings = () => request<Settings>('/api/settings');
-export const updateSettings = (body: Settings) =>
-  request<Settings>('/api/settings', { method: 'PUT', body: JSON.stringify(body) });
+export const getSettings = (collectionId: number) => request<Settings>(`/api/settings?c=${collectionId}`);
+export const updateSettings = (collectionId: number, body: Settings) =>
+  request<Settings>(`/api/settings?c=${collectionId}`, { method: 'PUT', body: JSON.stringify(body) });
 
 // Sections
 export const createSection = (songId: number, body: Partial<Section>) =>

@@ -4,8 +4,11 @@ import db from '../db';
 const router = Router();
 
 // List all songs with their sections
-router.get('/', (_req, res) => {
-  const songs = db.prepare(`SELECT * FROM songs ORDER BY position`).all() as any[];
+router.get('/', (req, res) => {
+  const collectionId = req.query.c;
+  if (!collectionId) return res.status(400).json({ error: 'collection id (c) is required' });
+
+  const songs = db.prepare(`SELECT * FROM songs WHERE collection_id = ? ORDER BY position`).all(collectionId) as any[];
   const sections = db.prepare(`SELECT * FROM sections ORDER BY song_id, position`).all() as any[];
 
   const sectionsBySong: Record<number, any[]> = {};
@@ -33,15 +36,16 @@ router.get('/:id', (req, res) => {
 
 // Create song
 router.post('/', (req, res) => {
-  const { title, credit, original, columns = 2 } = req.body;
+  const { title, credit, original, columns = 2, collection_id } = req.body;
   if (!title) return res.status(400).json({ error: 'title is required' });
+  if (!collection_id) return res.status(400).json({ error: 'collection_id is required' });
 
-  const maxPos = (db.prepare(`SELECT MAX(position) as m FROM songs`).get() as any).m ?? 0;
+  const maxPos = (db.prepare(`SELECT MAX(position) as m FROM songs WHERE collection_id = ?`).get(collection_id) as any).m ?? 0;
   const result = db
     .prepare(
-      `INSERT INTO songs (title, credit, original, columns, position) VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO songs (title, credit, original, columns, position, collection_id) VALUES (?, ?, ?, ?, ?, ?)`,
     )
-    .run(title, credit ?? null, original ?? null, columns, maxPos + 1);
+    .run(title, credit ?? null, original ?? null, columns, maxPos + 1, collection_id);
 
   const song = db.prepare(`SELECT * FROM songs WHERE id = ?`).get(result.lastInsertRowid) as any;
   res.status(201).json({ ...song, sections: [] });

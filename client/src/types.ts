@@ -1,3 +1,9 @@
+export interface Collection {
+  id: number;
+  name: string;
+  position: number;
+}
+
 export interface Settings {
   cover_title: string;
   cover_subtitle: string;

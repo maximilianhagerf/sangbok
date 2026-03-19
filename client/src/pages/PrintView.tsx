@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import * as api from '../api';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import type { Section, Settings, Song } from '../types';
@@ -691,6 +692,8 @@ function Cover({ songs, style, settings }: { songs: Song[]; style: PrintStyle; s
 
 export default function PrintView() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const collectionId = Number(searchParams.get('c')) || 1;
   const [songs, setSongs] = useState<Song[]>([]);
   const [settings, setSettings] = useState<Settings>({ cover_title: '', cover_subtitle: '', cover_credit: '' });
   const [loading, setLoading] = useState(true);
@@ -699,10 +702,10 @@ export default function PrintView() {
   const preset = PRESETS.find((p) => p.id === presetId) ?? PRESETS[0];
 
   useEffect(() => {
-    Promise.all([api.getSongs(), api.getSettings()])
+    Promise.all([api.getSongs(collectionId), api.getSettings(collectionId)])
       .then(([s, cfg]) => { setSongs(s); setSettings(cfg); })
       .finally(() => setLoading(false));
-  }, []);
+  }, [collectionId]);
 
   if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>{t('printView.loading')}</div>;
 

@@ -70,6 +70,16 @@
     "save": "Spara",
     "saving": "Sparar…"
   },
+  "collections": {
+    "label": "Samlingar",
+    "new": "Ny samling",
+    "namePlaceholder": "t.ex. Camp Glöd 2025",
+    "rename": "Byt namn",
+    "delete": "Ta bort samling",
+    "confirmDelete": "Ta bort \"{{name}}\"? Alla sånger försvinner permanent.",
+    "lastCollection": "Kan inte ta bort den sista samlingen",
+    "creating": "Skapar…"
+  },
   "printView": {
     "loading": "Laddar…",
     "printBtn": "Skriv ut / Spara PDF",

@@ -26,16 +26,49 @@ db.prepare(`CREATE TABLE IF NOT EXISTS sections (
   chords    TEXT
 )`).run();
 
-db.prepare(`CREATE TABLE IF NOT EXISTS settings (
-  key   TEXT PRIMARY KEY,
-  value TEXT
+db.prepare(`CREATE TABLE IF NOT EXISTS collections (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  name      TEXT    NOT NULL,
+  position  INTEGER NOT NULL DEFAULT 0
 )`).run();
 
-// Seed defaults (only if not already set)
-const insertDefault = db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)`);
-insertDefault.run('cover_title', 'Våra Sånger');
-insertDefault.run('cover_subtitle', 'En samling sånger');
-insertDefault.run('cover_credit', 'Disney & Camp Glöd 2025');
+// Migration: add collection_id to songs if missing
+const songsCols = db.prepare(`PRAGMA table_info(songs)`).all() as { name: string }[];
+if (!songsCols.some((c) => c.name === 'collection_id')) {
+  const result = db.prepare(`INSERT INTO collections (name, position) VALUES (?, ?)`).run('Sångbok', 1);
+  const defaultId = result.lastInsertRowid;
+  db.prepare(`ALTER TABLE songs ADD COLUMN collection_id INTEGER REFERENCES collections(id)`).run();
+  db.prepare(`UPDATE songs SET collection_id = ?`).run(defaultId);
+}
+
+// Migration: rebuild settings table with collection_id if missing
+const settingsCols = db.prepare(`PRAGMA table_info(settings)`).all() as { name: string }[];
+if (!settingsCols.some((c) => c.name === 'collection_id')) {
+  // Check if settings table exists at all first
+  const tables = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='settings'`).all() as { name: string }[];
+  const oldRows: { key: string; value: string }[] = tables.length > 0
+    ? (db.prepare(`SELECT key, value FROM settings`).all() as { key: string; value: string }[])
+    : [];
+
+  // Get default collection (first one by position)
+  const defaultCol = db.prepare(`SELECT id FROM collections ORDER BY position LIMIT 1`).get() as { id: number } | undefined;
+  const defaultId = defaultCol?.id ?? 1;
+
+  if (tables.length > 0) {
+    db.prepare(`DROP TABLE settings`).run();
+  }
+
+  db.prepare(`CREATE TABLE IF NOT EXISTS settings (
+    collection_id INTEGER NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+    key           TEXT    NOT NULL,
+    value         TEXT,
+    PRIMARY KEY (collection_id, key)
+  )`).run();
+
+  for (const row of oldRows) {
+    db.prepare(`INSERT OR IGNORE INTO settings (collection_id, key, value) VALUES (?, ?, ?)`).run(defaultId, row.key, row.value);
+  }
+}
 
 db.prepare(`CREATE INDEX IF NOT EXISTS idx_sections_song ON sections(song_id)`).run();
 db.prepare(`CREATE INDEX IF NOT EXISTS idx_songs_position ON songs(position)`).run();

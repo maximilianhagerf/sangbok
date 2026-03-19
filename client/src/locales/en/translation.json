@@ -70,6 +70,16 @@
     "save": "Save",
     "saving": "Saving…"
   },
+  "collections": {
+    "label": "Collections",
+    "new": "New collection",
+    "namePlaceholder": "e.g. Camp Glöd 2025",
+    "rename": "Rename",
+    "delete": "Delete collection",
+    "confirmDelete": "Delete \"{{name}}\"? All songs will be permanently lost.",
+    "lastCollection": "Cannot delete the last collection",
+    "creating": "Creating…"
+  },
   "printView": {
     "loading": "Loading…",
     "printBtn": "Print / Save PDF",
