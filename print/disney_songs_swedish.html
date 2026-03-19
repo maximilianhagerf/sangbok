@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sånghäfte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:    #F8F5EF;
+      --ink:      #1E1B18;
+      --ink-soft: #4A4540;
+      --gold:     #A8845A;
+      --gold-lt:  #C9A97A;
+      --rule:     #D8CFC4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { background: #E8E4DC; font-size: 16px; }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      color: var(--ink);
+      background: #E8E4DC;
+      padding: 2rem 1rem;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: var(--cream);
+      margin: 0 auto 3rem;
+      padding: 20mm 20mm 18mm;
+      position: relative;
+      box-shadow: 0 4px 40px rgba(0,0,0,.12), 0 1px 6px rgba(0,0,0,.08);
+    }
+
+    /* Cover */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .cover-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2.5rem;
+    }
+    .cover-rule { width: 40mm; height: 1px; background: var(--gold); margin-bottom: 2.5rem; }
+    .cover-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: 3.8rem;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin-bottom: 1.2rem;
+    }
+    .cover-title em { font-style: italic; color: var(--gold); }
+    .cover-sub {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--ink-soft);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+    }
+    .cover-index {
+      list-style: none;
+      text-align: left;
+      width: 100%;
+      margin-top: 0.5rem;
+      columns: 2;
+      column-gap: 6mm;
+    }
+    .cover-index li {
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      padding: 0.28rem 0;
+      border-bottom: 1px solid var(--rule);
+      break-inside: avoid;
+      letter-spacing: 0.01em;
+    }
+    .cover-index li:first-child { border-top: 1px solid var(--rule); }
+
+    /* Song header */
+    .song-header {
+      margin-bottom: 8mm;
+      padding-bottom: 5mm;
+      border-bottom: 1px solid var(--rule);
+    }
+    .song-number {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .song-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: 2.6rem;
+      line-height: 1.1;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+      margin-bottom: 0.4rem;
+    }
+    .song-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .song-credit {
+      font-size: 0.72rem;
+      font-style: italic;
+      color: var(--ink-soft);
+      letter-spacing: 0.03em;
+    }
+    .song-original {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .song-dot { font-size: 0.55rem; color: var(--rule); }
+
+    /* Section divider between two songs on same page */
+    .song-divider {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 7mm 0;
+    }
+
+    /* Lyrics */
+    .lyrics { columns: 2; column-gap: 8mm; column-rule: 1px solid var(--rule); }
+    .lyrics.single { columns: 1; }
+    .lyrics.three { columns: 3; column-gap: 6mm; column-rule: 1px solid var(--rule); }
+
+    .section { break-inside: avoid; margin-bottom: 4mm; }
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+    .section p {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 0.86rem;
+      line-height: 1.72;
+      color: var(--ink);
+    }
+    .section p em { font-style: italic; color: var(--ink-soft); }
+    .chord {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-lt);
+      display: block;
+      margin-bottom: 0.1rem;
+    }
+
+    /* Page foot */
+    .page-foot {
+      position: absolute;
+      bottom: 10mm;
+      left: 20mm; right: 20mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .page-foot-line { flex: 1; height: 1px; background: var(--rule); }
+    .page-foot-num { font-size: 0.62rem; letter-spacing: 0.18em; color: var(--rule); padding: 0 0.6rem; }
+
+    .flourish {
+      text-align: center;
+      color: var(--gold-lt);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      margin: 3mm 0;
+      opacity: 0.5;
+      user-select: none;
+    }
+
+    @page { size: A4; margin: 0; }
+
+    @media print {
+      html { background: none; }
+      body { background: none; padding: 0; }
+      .page {
+        margin: 0;
+        padding: 20mm 20mm 18mm;
+        box-shadow: none;
+        page-break-after: always;
+        page-break-inside: avoid;
+        min-height: 297mm;
+        width: 210mm;
+      }
+      .page:last-child { page-break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ COVER ══════════════════════════════════════════ -->
+<div class="page cover">
+  <p class="cover-eyebrow">En samling sånger</p>
+  <div class="cover-rule"></div>
+  <h1 class="cover-title">Våra<br><em>Sånger</em></h1>
+  <p class="cover-sub">Disney &amp; Camp Glöd 2025</p>
+  <div class="cover-rule"></div>
+  <ul class="cover-index">
+    <li>En helt ny värld</li>
+    <li>Du käre lille snickerbo</li>
+    <li>Jag vill ha munkar</li>
+    <li>En kulen natt</li>
+    <li>Jag vill ha blommig falukorv</li>
+    <li>I medelhavet</li>
+    <li>Var rädd om din fyrfota vän</li>
+    <li>I ett hus vid skogens slut</li>
+    <li>Undulaten</li>
+    <li>Min hatt den har tre kanter</li>
+    <li>Trampa på gasen</li>
+    <li>Faster Ingeborg</li>
+    <li>Gullefjun</li>
+    <li>My Bonnie</li>
+    <li>Fader Abraham</li>
+    <li>Var nöjd med allt som livet ger</li>
+    <li>Uti vår hage</li>
+    <li>Här kommer Pippi Långstrump</li>
+    <li>Idas sommarvisa</li>
+    <li>Guld och gröna skogar</li>
+    <li>34:an</li>
+    <li>Jag hade en gång en båt</li>
+    <li>Temperaturen</li>
+    <li>Bengt</li>
+    <li>När vi två blir en</li>
+    <li>Skit i allt</li>
+    <li>O'Boy</li>
+    <li>Brev från kolonien</li>
+    <li>Jonnie</li>
+    <li>Till SJ</li>
+    <li>Leaving on a jet plane</li>
+    <li>TVM sången</li>
+  </ul>
+  <div class="page-foot">
+    <div class="page-foot-line"></div>
+    <span class="page-foot-num">◆</span>
+    <div class="page-foot-line"></div>
+  </div>
+</div>
+
+<!-- ══ 1 · EN HELT NY VÄRLD ══════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">I</p>
+    <h2 class="song-title">En helt ny värld</h2>
+    <div class="song-meta">
+      <span class="song-credit">Aladdin, 1992</span>
+      <span class="song-dot">·</span>
+      <span class="song-original">A Whole New World</span>
+    </div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p class="section-label">Vers — Aladdin</p>
+      <p>
+        Jag kan visa en värld<br>
+        Vacker, bländande, härlig<br>
+        Säg om du ska va' ärlig<br>
+        Har du drömt om den ibland?<br><br>
+        Jag kan lära dig se<br>
+        bortom magiska under<br>
+        Oförglömliga stunder<br>
+        Om du flyger bort med mig
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Refräng — Aladdin</p>
+      <p>
+        En helt ny värld<br>
+        ifrån ett annat perspektiv<br>
+        Ingen bestämmer här<br>
+        Var och när blir glömt högt ovan molnen
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Refräng — Jasmin</p>
+      <p>
+        En helt ny värld<br>
+        En plats jag inte visste fanns<br>
+        Men här syns allting klart<br>
+        Så underbart<br>
+        att va' här i en helt ny värld med dig
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">— Aladdin</p>
+      <p>Ja, här i en helt ny värld med dig</p>
+    </div>
+    <div class="section">
+      <p class="section-label">Vers — Jasmin</p>
+      <p>
+        Kan jag tro det jag ser?<br>
+        Känslan är utan gränser<br>
+        Ofattbart, det som känns här<br>
+        i en himmel utan slut
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Duett</p>
+      <p>
+        <em>[Jasmin:]</em> En helt ny värld<br>
+        <em>[Aladdin:]</em> Blunda inte, jag ber<br>
+        <em>[Jasmin:]</em> Så mycket vi har kvar att se<br>
+        <em>[Aladdin:]</em> Nej, försök hålla andan<br>
+        <em>[Jasmin:]</em> Jag är en stjärnas sken<br>
+        på himmelen<br>
+        och jag kan inte återvända hem
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Duett — fortsättning</p>
+      <p>
+        <em>[Aladdin:]</em> En helt ny värld<br>
+        <em>[Jasmin:]</em> Överallt finns nåt nytt<br>
+        <em>[Aladdin:]</em> Vi gör en upptäcktsfärd, vi två<br>
+        <em>[Jasmin:]</em> Varje stund är en önskan<br><br>
+        <em>[Båda:]</em> Och jag ska fånga den<br>
+        och spara den<br>
+        Då väntar sen en helt ny värld med dig
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Outro</p>
+      <p>
+        <em>[Aladdin:]</em> En helt ny värld<br>
+        <em>[Jasmin:]</em> En helt ny värld<br>
+        <em>[Aladdin:]</em> Som öppnar sig<br>
+        <em>[Jasmin:]</em> Som öppnar sig<br>
+        <em>[Aladdin:]</em> Ett drömpalats<br>
+        <em>[Jasmin:]</em> En magisk plats<br>
+        <em>[Båda:]</em> För dig och mig
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">1</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 2 · DU KÄRE LILLE SNICKERBO ══════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">II</p>
+    <h2 class="song-title">Du käre lille snickerbo</h2>
+    <div class="song-meta"><span class="song-credit">Text: Astrid Lindgren · Musik: Georg Riedel</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">C  F</span>
+      <p>Du käre lille snickerbo'</p>
+      <span class="chord">C  G7  C</span>
+      <p>här kommer jag igen.</p>
+      <span class="chord">C  F</span>
+      <p>Nu är det bråttom kan du tro,</p>
+      <span class="chord">C  G7  C</span>
+      <p>nu är det klippt igen.</p>
+      <span class="chord">Am  Em</span>
+      <p>Snickerboa hopp fallera,</p>
+      <span class="chord">G  D7  G7</span>
+      <p>å snickerboa hopp fallerej</p>
+      <span class="chord">C  F</span>
+      <p>är bra att ha, hopp fallera,</p>
+      <span class="chord">C  G7  C</span>
+      <p>för stackars mig — hopp fallerej</p>
+    </div>
+    <div class="section">
+      <p>
+        Till snickerboa ränner jag,<br>
+        när det är nåt jag gjort.<br>
+        Men farsan löper också bra<br>
+        fast inte lika fort.<br>
+        Snickerboa hopp fallera<br>
+        å snickerboa hopp fallerej<br>
+        är bra att ha hopp fallera<br>
+        för stackars mig — hopp fallerej
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Det får bli slut med mine hyss<br>
+        har farsan sagt i från.<br>
+        Jag gjorde ett alldeles nyss<br>
+        som visst tog knäcken på'n.<br>
+        Snickerboa hopp fallera<br>
+        å snickerboa hopp fallerej<br>
+        är bra att ha hopp fallera<br>
+        för stackars mig — hopp fallerej
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Du käre lille snickerbo'<br>
+        va jag är glad åt dej!<br>
+        Här sitter jag i lugn å ro<br>
+        å bare viler mej.<br>
+        Snickerboa hopp fallera<br>
+        å snickerboa hopp fallerej<br>
+        är bra att ha hopp fallera<br>
+        för stackars mig<br>
+        Hopp fallerej
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">2</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 3 · JAG VILL HA MUNKAR + EN KULEN NATT ═══════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">III</p>
+    <h2 class="song-title">Jag vill ha munkar</h2>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <p>
+        Jag vill ha munkar, munkar, munkar med hål i.<br>
+        Stora tjocka feta, munkar med hål i.<br><br>
+        När jag kommer hem till dig så vill jag inte ha<br>
+        nån leverpastej.<br><br>
+        Biffar — med lök<br>
+        Kola — med papper<br>
+        Plättar — med sylt<br>
+        Jag vill ha hallon … med mask i …
+      </p>
+    </div>
+  </div>
+
+  <hr class="song-divider">
+
+  <div class="song-header">
+    <h2 class="song-title">En kulen natt</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Trad.</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">D</span>
+      <p>En kulen natt, natt, natt,</p>
+      <span class="chord">A7</span>
+      <p>min båt jag styrde<br>
+      på havets vågade, vågade, våg</p>
+      <span class="chord">D  D7</span>
+      <p>så skummet yrde.</p>
+      <span class="chord">G</span>
+      <p>Och vart jag sågade, sågade, såg</p>
+      <span class="chord">D</span>
+      <p>på havets vågade, vågade, våg,</p>
+      <span class="chord">A7</span>
+      <p>där ner i djupete, pete, pete, pet,</p>
+      <span class="chord">D  A7  D</span>
+      <p>en fisk jag såg och det var du</p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">3</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 4 · JAG VILL HA BLOMMIG FALUKORV ════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">IV</p>
+    <h2 class="song-title">Jag vill ha blommig falukorv</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Hans Alfredsson</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">G  A7</span>
+      <p>Jag vill ha blommig falukorv till lunch mamma.</p>
+      <span class="chord">D7  G</span>
+      <p>Nåt annat vill jag inte ha.</p>
+      <span class="chord">Em  Em/D#  Em/D  Em/C#</span>
+      <p>Jag hatar tomaten och fisken och spenaten</p>
+      <span class="chord">A7  Am7</span>
+      <p>och plättarna med lingonsylt.</p>
+      <span class="chord">G</span>
+      <p>Fläsk — har vi för ofta.</p>
+      <span class="chord">A7</span>
+      <p>Lamm — smakar som kofta.</p>
+      <span class="chord">Bm7  E7  Am7  D7</span>
+      <p>Biff med lök är riktigt läbbigt.</p>
+      <span class="chord">G  A7</span>
+      <p>Jag vill ha blommig falukorv till lunch mamma.</p>
+      <span class="chord">A7  D7  G</span>
+      <p>Nåt annat vill jag inte ha.</p>
+    </div>
+    <div class="section">
+      <p>
+        Jag vill ha blommig falukorv till lunch, mamma<br>
+        Nått annat vill jag inte ha<br><br>
+        Nej, aldrig jag äter mer rotmos och potäter<br>
+        Och isterband och kalvkotlett<br><br>
+        Pytt, det är för pyttigt<br>
+        Mjölk, det är för nyttigt<br>
+        Knäckebröd för hårt att tugga<br><br>
+        Jag vill ha blommig falukorv till lunch, mamma<br>
+        Nått annat vill jag inte ha
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">4</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 5 · I MEDELHAVET ═════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">V</p>
+    <h2 class="song-title">I medelhavet</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Trazan och Banarne</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p class="section-label">Svenska</p>
+      <span class="chord">A  E7</span>
+      <p>I medelhavet, sardiner simmar</p>
+      <span class="chord">E7  A</span>
+      <p>apu apu, apu apu</p>
+      <span class="chord">A  A7  D</span>
+      <p>Men i mitt hjärta där simmar du!</p>
+      <span class="chord">A  E7  A</span>
+      <p>apu apu, apu apu</p>
+    </div>
+    <div class="section">
+      <p class="section-label">Engelska</p>
+      <p>
+        In the Middle ocean sardines are swimming.<br>
+        Apu, apu, apu, apu.<br>
+        But in my heart are swimming you.<br>
+        Apu, apu, apu, apu.
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Tyska</p>
+      <p>
+        In mittel-mhere sardinen schwimmen,<br>
+        apu apu, apu apu<br>
+        Aber in mein hertz da schwimmst ja du,<br>
+        apu apu, apu apu
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Ryska</p>
+      <p>
+        I Medelhavski sardinski simmski<br>
+        Apuskidusski, apuskidu.<br>
+        Men i mitt hjärtski där simmski dusski.<br>
+        Apuskidusski, apuskidu.
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Norska</p>
+      <p>
+        I Norske havet sardiner svomme.<br>
+        Apu, apu, apu, apu.<br>
+        Men i min blodpump där plasker du.<br>
+        Apu, apu, apu, apu.
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">5</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 6 · VAR RÄDD + I ETT HUS ═════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">VI</p>
+    <h2 class="song-title">Var rädd om din fyrfota vän</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Eva &amp; Bengt Sändh · Melodi: Stars and Stripes</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <p>
+        Var rädd om din fyrfota vän,<br>
+        för en anka kan var dess mamma,<br>
+        som simmar omkring i en damm,<br>
+        allt medan solen ibland tittar fram.<br>
+        Å nu tror vi att visan är slut.<br>
+        Å DET ÄR DEN!
+      </p>
+    </div>
+  </div>
+
+  <hr class="song-divider">
+
+  <div class="song-header">
+    <h2 class="song-title">I ett hus vid skogens slut</h2>
+    <div class="song-meta"><span class="song-credit">Musik: Horatio Richmond Palmer · Text: Okänd</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">D  A</span>
+      <p>I ett hus vid skogens slut</p>
+      <span class="chord">D</span>
+      <p>liten tomte tittar ut</p>
+      <span class="chord">A</span>
+      <p>Haren skuttar fram så fort,</p>
+      <span class="chord">D</span>
+      <p>klappar på dess port.</p>
+      <span class="chord">G</span>
+      <p>Hjälp, ack hjälp, ack hjälp du mig,</p>
+      <span class="chord">A  D</span>
+      <p>annars skjuter jägarn mig</p>
+      <span class="chord">Bm  G</span>
+      <p>Kom, ja kom i stugan in,</p>
+      <span class="chord">A  D</span>
+      <p>räck mig handen din.</p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">6</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 7 · UNDULATEN + MIN HATT ═════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">VII</p>
+    <h2 class="song-title">Undulaten</h2>
+    <div class="song-meta"><span class="song-credit">Text: Bengt Nordström · Melodi: Med en enkel tulipan</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <p>
+        Jag är en liten undulat,<br>
+        som fått för dåligt med mat,<br>
+        för dom jag bor hos,<br>
+        för dom jag bor hos,<br>
+        är så snåla.<br><br>
+        Dom ger mig sill varenda dag,<br>
+        och det vill jag inte ha,<br>
+        för jag vill bara,<br>
+        för jag vill bara,<br>
+        ha Coca Cola och glass!
+      </p>
+    </div>
+  </div>
+
+  <hr class="song-divider">
+
+  <div class="song-header">
+    <h2 class="song-title">Min hatt den har tre kanter</h2>
+    <div class="song-meta"><span class="song-credit">Text och musik: Gullan Bornemark</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p class="section-label">Svenska</p>
+      <span class="chord">G  D7</span>
+      <p>Min hatt, den har tre kanter,</p>
+      <span class="chord">G</span>
+      <p>Tre kanter har min hatt.</p>
+      <span class="chord">D7</span>
+      <p>Och har den ej tre kanter,</p>
+      <span class="chord">G</span>
+      <p>Så är det ej min hatt!</p>
+    </div>
+    <div class="section">
+      <p class="section-label">Tyska</p>
+      <p>
+        Mein Hut, der hat drei Ecken,<br>
+        Drei Ecken hat mein Hut.<br>
+        Und hätt' er nicht drei Ecken,<br>
+        So wär' er nicht mein Hut!
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Engelska</p>
+      <p>
+        My hat, it has three sides,<br>
+        Three sides has my hat,<br>
+        And had it not three sides,<br>
+        It would not be my hat!
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">7</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 8 · TRAMPA PÅ GASEN + FASTER INGEBORG ════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">VIII</p>
+    <h2 class="song-title">Trampa på gasen</h2>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <p>
+        Trampa på gasen och lätta ankar<br>
+        sätt inunder pannan fyr (fem, sex)<br>
+        Med svällande segel och fyllda tankar<br>
+        drar vi ut, drar vi ut<br>
+        drar vi ut på äventyr!<br><br>
+        Ä' ni me' — vi ä' me'<br>
+        de' e' klart att vi ä' de'<br>
+        vicket tjat — bara gnat<br>
+        vi ska doppa dej i spat<br><br>
+        nä vafalls — inget alls<br>
+        jag har bara skrovlig hals<br>
+        nageltrång och sånt där<br>
+        undra på att man är tvär
+      </p>
+    </div>
+  </div>
+
+  <hr class="song-divider">
+
+  <div class="song-header">
+    <h2 class="song-title">Faster Ingeborg</h2>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">D</span>
+      <p>Jag har en gammal faster</p>
+      <span class="chord">A7</span>
+      <p>som heter Ingeborg<br>
+      jag härmar hennes gester</p>
+      <span class="chord">D</span>
+      <p>när hon går på stadens torg<br>
+      Och så vajar fjädern</p>
+      <span class="chord">A7</span>
+      <p>och fjädern vajar så<br>
+      och så vajar fjädern</p>
+      <span class="chord">D</span>
+      <p>och fjädern vajar så</p>
+    </div>
+    <div class="section">
+      <p><em>Fortsätt med: Hatten, schalen, muffen, kjolen, faster, torget</em></p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">8</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 9 · GULLEFJUN + MY BONNIE ════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">IX</p>
+    <h2 class="song-title">Gullefjun</h2>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">A  E</span>
+      <p>Det var en kyckling som hette gullefjun</p>
+      <span class="chord">E  A</span>
+      <p>han skulle ge sig ut på promenad.</p>
+      <span class="chord">A  E</span>
+      <p>och solen lyste och gräset lockade,</p>
+      <span class="chord">E  A</span>
+      <p>och hela världen var så hjärtans glad.</p>
+      <span class="chord">D  A</span>
+      <p>det fanns ett hål ut i hönsgårnsnätet,</p>
+      <span class="chord">E7  A</span>
+      <p>där genom trippade på lätta fjät.</p>
+      <span class="chord">D  A</span>
+      <p>Den lilla Gullefjun med mjuka silkesdun,</p>
+      <span class="chord">E7</span>
+      <p>och alla hönsen sa:</p>
+      <span class="chord">A  E7</span>
+      <p>ka-ka ka-ka ka-ka ka-ka</p>
+      <span class="chord">D  A</span>
+      <p>ka-ka ka-ka ka ka-ka ka-ka</p>
+    </div>
+  </div>
+
+  <hr class="song-divider">
+
+  <div class="song-header">
+    <h2 class="song-title">My Bonnie</h2>
+    <div class="song-meta"><span class="song-credit">Traditional Scottish folk song</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">G  C  G</span>
+      <p>My bonnie lies over the ocean,</p>
+      <span class="chord">G  A  D  D7</span>
+      <p>My bonnie lies over the sea.</p>
+      <span class="chord">G  C  G</span>
+      <p>My bonnie lies over the ocean</p>
+      <span class="chord">C  D7  G</span>
+      <p>Oh, bring back my Bonnie to me.</p>
+      <span class="chord">G  C  Am</span>
+      <p>Bring back, bring back,</p>
+      <span class="chord">D7  G</span>
+      <p>Oh, bring back my bonnie to me, to me!</p>
+      <span class="chord">G  C  Am7</span>
+      <p>Bring back, bring back,</p>
+      <span class="chord">D7  G</span>
+      <p>Oh, bring back my Bonnie to me.</p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">9</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 10 · FADER ABRAHAM ════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">X</p>
+    <h2 class="song-title">Fader Abraham</h2>
+  </div>
+  <div class="lyrics three">
+    <div class="section">
+      <span class="chord">E</span>
+      <p>
+        Fader Abraham, fader Abraham<br>
+        <em>(B7)</em> fyra söner hade Abraham<br>
+        och dom åt och drack<br>
+        och dom drack och åt<br>
+        <em>(E)</em> och sen gjorde dom så här:<br>
+        <strong>Höger hand!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Fader Abraham, fader Abraham<br>
+        Fyra söner hade Abraham<br>
+        Och de åt och drack<br>
+        Och de drack och åt<br>
+        Och sen gjorde de så här:<br>
+        <strong>Höger hand! Vänster hand!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Fader Abraham, fader Abraham<br>
+        Fyra söner hade Abraham<br>
+        Och de åt och drack<br>
+        Och de drack och åt<br>
+        Och sen gjorde de så här:<br>
+        <strong>Höger hand! Vänster hand! Höger fot!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Fader Abraham, fader Abraham<br>
+        Fyra söner hade Abraham<br>
+        Och de åt och drack<br>
+        Och de drack och åt<br>
+        Och sen gjorde de så här:<br>
+        <strong>Höger hand! Vänster hand!<br>Höger fot! Vänster fot!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Fader Abraham, fader Abraham<br>
+        Fyra söner hade Abraham<br>
+        Och de åt och drack<br>
+        Och de drack och åt<br>
+        Och sen gjorde de så här:<br>
+        <strong>Höger hand! Vänster hand!<br>Höger fot! Vänster fot! Huvudet!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Fader Abraham, fader Abraham<br>
+        Fyra söner hade Abraham<br>
+        Och de åt och drack<br>
+        Och de drack och åt<br>
+        Och sen gjorde de så här:<br>
+        <strong>Höger hand! Vänster hand!<br>Höger fot! Vänster fot!<br>Huvudet! Kroppen med!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Fader Abraham, fader Abraham<br>
+        Fyra söner hade Abraham<br>
+        Och de åt och drack<br>
+        Och de drack och åt<br>
+        Och sen gjorde de så här:<br>
+        <strong>Tjohej!</strong>
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">10</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 11 · VAR NÖJD MED ALLT SOM LIVET GER ════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XI</p>
+    <h2 class="song-title">Var nöjd med allt som livet ger</h2>
+    <div class="song-meta"><span class="song-credit">Svensk text: Martin Söderhjelm</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Var nöjd med allt som livet ger<br>
+        Och allting som du kring dig ser<br>
+        Glöm bort bekymmer, sorger och besvär<br>
+        Var glad och nöjd för vet du vad.<br>
+        En Björntjänst gör ju ingen glad<br>
+        var nöjd med livet som vi lever här
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Vart hän jag än strövar, vart hän jag än går<br>
+        Står djungel och snår, kring mina spår<br>
+        Jag älskar bin och deras bon<br>
+        för honung är ju min passion<br>
+        Åh vill du av myror få munnen full<br>
+        Så ta en titt under sten och mull<br>
+        Åh kanske smaka dom.
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        — "Äta myror"<br>
+        — "Det är världens käk, kittlar dödsskönt i kistan"
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Var nöjd med allt som livet ger<br>
+        Och allting som du kring dig ser<br>
+        Glöm bort bekymmer, sorger och besvär<br>
+        Var glad och nöjd för vet du vad.<br>
+        En Björntjänst gör ju ingen glad<br>
+        var nöjd med livet som vi lever här
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Om frukter det lockar<br>
+        Banan eller bär,<br>
+        se till att du plockar<br>
+        dom utan besvär,<br>
+        Vill du plocka fruker av bästa klass<br>
+        Så använd din höger å´ vänster tass,<br>
+        Men klorna dom ska du dra in<br>
+        så fort du ska ta dig en fin apelsin<br>
+        Hoppas att du har förstått?
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        — "O ja Tack Baloo"<br><br>
+        Var nöjd med livet som vi alla lever här<br>
+        — "Bland träd och bär"<br>
+        Vi lever här
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">11</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 12 · UTI VÅR HAGE ════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XII</p>
+    <h2 class="song-title">Uti vår hage</h2>
+    <div class="song-meta"><span class="song-credit">Svensk folkvisa från Gotland</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">Am  F  G  C</span>
+      <p>Uti vår hage där växa blå bär</p>
+      <span class="chord">F  C</span>
+      <p>Kom hjärtans fröjd</p>
+      <span class="chord">Am  D7  G</span>
+      <p>Vill du mig något så träffas vi där</p>
+      <span class="chord">E  Am  E</span>
+      <p>Kom liljor och aquileja,</p>
+      <span class="chord">Am  E</span>
+      <p>kom rosor och saliveja</p>
+      <span class="chord">Am  Dm</span>
+      <p>Kom ljuva krusmynta,</p>
+      <span class="chord">Am  E  Am</span>
+      <p>kom hjärtans fröjd</p>
+    </div>
+    <div class="section">
+      <p>
+        Fagra små blommor där bjuda till dans<br>
+        Kom hjärtans fröjd<br>
+        Vill du så binder jag åt dig en krans<br>
+        Kom liljor och aquileja,<br>
+        kom rosor och saliveja<br>
+        Kom ljuva krusmynta,<br>
+        kom hjärtans kär
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Kransen sätter jag sen i ditt hår<br>
+        Kom hjärtans fröjd<br>
+        Solen den dalar men hoppet upp går<br>
+        Kom liljor och aquileja,<br>
+        kom rosor och saliveja<br>
+        Kom ljuva krusmynta,<br>
+        kom hjärtans fröjd
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Uti vår hage finns blommor och bär<br>
+        Kom hjärtans fröjd<br>
+        Men utav alla mej kärast du är<br>
+        Kom liljor och aquileja,<br>
+        kom rosor och saliveja<br>
+        Kom ljuva krusmynta,<br>
+        kom hjärtans fröjd
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">12</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 13 · HÄR KOMMER PIPPI LÅNGSTRUMP ════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XIII</p>
+    <h2 class="song-title">Här kommer Pippi Långstrump</h2>
+    <div class="song-meta"><span class="song-credit">Text: Astrid Lindgren · Musik: Georg Riedel</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">D  G</span>
+      <p>Här kommer Pippi Långstrump,</p>
+      <span class="chord">A7</span>
+      <p>tjolahopp tjolahej tjolahoppsan sa.</p>
+      <span class="chord">D  G</span>
+      <p>Här kommer Pippi Långstrump,</p>
+      <span class="chord">A7  D</span>
+      <p>ja här kommer faktiskt jag.</p>
+      <span class="chord">D  Em</span>
+      <p>Har du sett min apa,</p>
+      <span class="chord">A7  D</span>
+      <p>min lilla söta fina apa.</p>
+      <span class="chord">Em</span>
+      <p>Har du sett herr Nilsson,</p>
+      <span class="chord">A7  D</span>
+      <p>ja han heter faktiskt så.</p>
+      <span class="chord">Em</span>
+      <p>Har du sett min villa,</p>
+      <span class="chord">A7  D</span>
+      <p>min Villa Villekulla villa.</p>
+      <span class="chord">Em</span>
+      <p>Vill å vill du veta</p>
+      <span class="chord">A7  D</span>
+      <p>varför villan heter så?</p>
+    </div>
+    <div class="section">
+      <p>
+        Jo, där bor ju Pippi Långstrump<br>
+        tjolahopp tjolahej tjolahoppsansa.<br>
+        Jo, där bor ju Pippi Långstrump<br>
+        ja, där bor faktiskt jag.<br>
+        Det är inte illa<br>
+        jag har ju apa häst och villa<br>
+        En kappsäck full med pengar<br>
+        är ju också bra att ha.
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Kom nu alla vänner<br>
+        varenda kotte som jag känner<br>
+        nu ska vi leva loppan<br>
+        tjolahej tjolahoppsan sa.<br>
+        Här kommer Pippi Långstrump<br>
+        tjolahopp tjolahej tjolahoppsansa.<br>
+        Här kommer Pippi Långstrump<br>
+        ja, här kommer faktiskt jag.
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">13</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 14 · IDAS SOMMARVISA ═══════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XIV</p>
+    <h2 class="song-title">Idas sommarvisa</h2>
+    <div class="song-meta"><span class="song-credit">Text: Astrid Lindgren · Musik: Georg Riedel</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">C  Dm</span>
+      <p>Du ska inte tro det blir sommar</p>
+      <span class="chord">G  C</span>
+      <p>ifall inte nå'n sätter fart</p>
+      <span class="chord">Dm</span>
+      <p>På sommar'n och gör lite somrigt</p>
+      <span class="chord">G  C</span>
+      <p>för då kommer blommorna snart</p>
+      <span class="chord">C  Dm</span>
+      <p>Jag gör så att blommorna blommar</p>
+      <span class="chord">G  E7sus4  E7</span>
+      <p>jag gör hela kohagen grön</p>
+      <span class="chord">Am  Dm</span>
+      <p>Och nu så har sommaren kommit</p>
+      <span class="chord">G  C</span>
+      <p>för jag har just tagit bort snön</p>
+    </div>
+    <div class="section">
+      <p>
+        Jag gör mycket vatten i bäcken,<br>
+        så där så det hoppar och far.<br>
+        Jag gör fullt med svalor som flyger<br>
+        och myggor som svalorna tar.<br>
+        Jag gör löven nya på träden<br>
+        och små fågelbon här och där.<br>
+        Jag gör himlen vacker om kvällen,<br>
+        för jag gör den alldeles skär.
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Och smultron det gör jag åt barna,<br>
+        för det tycker jag dom kan få,<br>
+        och andra små roliga saker<br>
+        som passar när barnen är små.<br>
+        Och jag gör så roliga ställen,<br>
+        där barnen kan springa omkring,<br>
+        då blir barna fulla med sommar<br>
+        och bena blir fulla med spring.
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">14</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 15 · GULD OCH GRÖNA SKOGAR ══════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XV</p>
+    <h2 class="song-title">Guld och gröna skogar</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Hasse Andersson</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Det var dans och hålligång uppå logen natten lång<br>
+        Det var sommar, det var guld och gröna skogar
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Det är en stilla kväll men jag får ingen ro<br>
+        Solen dröjer kvar vid havets rand<br>
+        Jag börjar tänka på, en gång för länge sen<br>
+        En annan kväll i pilevallars land
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Spelemännen spelade som elden vore lös<br>
+        Pågarna från Sjöbo var vilda och de svingade varsin tös
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Det var dans och hålligång uppå logen natten lång<br>
+        Det var sommar, det var guld och gröna skogar<br>
+        Jag var ung och du var grann, som vi älskade varann<br>
+        Det var sommar, det var guld och gröna skogar
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Under eken där vid ån frågade du mig<br>
+        Om jag var din i alla våra dar<br>
+        Och solen sänkte sig när fiolen stämde upp<br>
+        Jag lovade att alltid stanna kvar
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Det var dans och hålligång uppå logen natten lång<br>
+        Det var sommar, det var guld och gröna skogar<br>
+        Jag var ung och du var grann, som vi älskade varann<br>
+        Och jag lovade dig guld och gröna skogar, ja!
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Jag var ung och du var grann, som vi älskade varann<br>
+        Det var sommar det var guld och gröna skogar
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">15</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 16 · 34:AN ════════════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XVI</p>
+    <h2 class="song-title">34:an</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Olle Adolphson</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Denna kåk har varit våran uti många herrans år<br>
+        Denna kåk har varit vår och det har nog satt sina spår<br>
+        Denna kåk har varit snäll och den var vår i vått och torrt<br>
+        Men nu är det slut på det för nu ska 34:an bort
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Ja nu är det slut på gamla tider<br>
+        Ja nu är det färdigt inom kort<br>
+        Nu ska hela rasket rivas<br>
+        Nu ska hela rasket bort<br>
+        Så jag tar farväl och stora tårar rullar på min kind<br>
+        Nu är det slut på gamla tider<br>
+        Nu går 34:an i himlen in
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Denna kåk var ganska rar och släppte solsken till oss in<br>
+        Den var också generös med fukt och kyla regn och vind<br>
+        Kanske ful och lite gnällig men den ville alla väl<br>
+        Och den var vår i alla väder fastän gisten ful och skev
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Men nu är det slut på gamla tider<br>
+        Ja nu är det färdigt inom kort<br>
+        Nu ska hela rasket rivas<br>
+        Nu ska hela rasket bort
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Här i kåken har vi härjat sen vi alla varit små<br>
+        Här i kåken klådde morsan vicevärden gul och blå<br>
+        Ja vår kåk har fått stå pall för smällar hårda så det dög<br>
+        Som när far gick genom väggen så att spån och plankor flög
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Så jag tar farväl och stora tårar rullar på min kind<br>
+        Nu är det slut på gamla tider<br>
+        Nu går 34:an i himlen in<br>
+        Nu är det slut på gamla tider<br>
+        Nu går 34:an i himlen in
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">16</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 17 · JAG HADE EN GÅNG EN BÅT ═════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XVII</p>
+    <h2 class="song-title">Jag hade en gång en båt</h2>
+    <div class="song-meta"><span class="song-credit">Text och musik: Cornelis Vreeswijk</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Jag hade en gång en båt<br>
+        Med segel och ruff och köl<br>
+        Men det var för länge sen, så länge sen<br>
+        Svara mig du<br>
+        Var är den nu?<br>
+        Jag bara undrar<br>
+        Var är den nu?
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Jag hade en gång en dröm<br>
+        Jag trodde att den var sann<br>
+        Så väcktes jag ur min sömn och drömmen försvann<br>
+        Svara mig du<br>
+        Var är den nu?<br>
+        Jag bara undrar<br>
+        Var är den nu?
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Det fanns en gång en soldat<br>
+        Han kysste sin mor farväl<br>
+        Han sa till sin flicka; du, jag kommer igen<br>
+        Svara mig du<br>
+        Var är han nu?<br>
+        Jag bara undrar<br>
+        Var är han nu?
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Det fanns en gång en stad<br>
+        I parken där lekte barn<br>
+        Så släppte man ner en bomb och staden försvann<br>
+        Svara mig du<br>
+        Var är den nu?<br>
+        Jag bara undrar<br>
+        Var är den nu?
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Jag hade en gång en båt<br>
+        Jag drömde en dröm en gång<br>
+        Men det var för länge sen, så länge sen<br>
+        Svara mig du<br>
+        Var är dom nu?<br>
+        Jag bara undrar<br>
+        Var är dom nu?
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">17</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 18 · TEMPERATUREN ═════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XVIII</p>
+    <h2 class="song-title">Temperaturen</h2>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">D  A7  D</span>
+      <p>
+        Temperaturen är hög uti kroppen.<br>
+        Närmare 40 än 37,5
+      </p>
+      <span class="chord">A7  D</span>
+      <p>
+        Så ska det vara när ångan är oppe,<br>
+        och så är fallet uti detta nu
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Vi rullar, vi rullar, vi rullar, vi rullar<br>
+        Vi rullar, vi rullar, vi rullar, vi rullar<br>
+        Rullar, vi rullar, vi rullar och hej
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Temperaturen är hög uti kroppen.<br>
+        Närmare 40 än 37,5<br>
+        så ska det vara när ångan är oppe<br>
+        och så är fallet i detta nu
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Framåt och bakåt, framåt och bakåt<br>
+        Framåt och bakåt, framåt och bakåt<br>
+        Framåt och bakåt och framåt och hej
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Temperaturen är hög uti kroppen.<br>
+        Närmare 40 än 37,5<br>
+        så ska det vara när ångan är oppe<br>
+        och så är fallet i detta nu
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Kebab och falafel, Kebab och falafel<br>
+        Kebab och falafel, Kebab och falafel<br>
+        Kebab och falafel och Kebab och falafel
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">18</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 19 · BENGT ════════════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XIX</p>
+    <h2 class="song-title">Bengt</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Nassim Al Fakir</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — Nej!<br>
+        Tryck där på knappen med din <strong>högra hand</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — Nej!<br>
+        Tryck där på knappen med din <strong>vänstra hand</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — Nej!<br>
+        Tryck där på knappen med din <strong>högra fot</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — Nej!<br>
+        Tryck där på knappen med din <strong>vänstra fot</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — Nej!<br>
+        Tryck där på knappen med ditt <strong>huvud!</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — Nej!<br>
+        Tryck där på knappen med din <strong>tunga</strong>
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Hej, jag heter Bengt, jag jobbar på en knappfabrik<br>
+        Jag har fru men inga barn, men ändå frågar chefen mig:<br>
+        "Bengt, är du ledig?" — <strong>JA!</strong>
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">19</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 20 · NÄR VI TVÅ BLIR EN ══════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XX</p>
+    <h2 class="song-title">När vi två blir en</h2>
+    <div class="song-meta"><span class="song-credit">Text och musik: Per Gessle</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Det verkar så lätt att bara stöta på<br>
+        Ja, det är alla människors rätt, att bara göra så<br>
+        Men det är så svårt att säga till nån<br>
+        Vad man egentligen tycker och tänker om nån<br>
+        Det blir mest en massa prat<br>
+        Om plugget och pop och bio såklart
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Jag vill känna din kropp emot min, höra pulsen slå<br>
+        Din mun tätt emot min, hjärtat snabbar på<br>
+        Jag ser på dig och du ser på mig<br>
+        Och jag säger, "Ja, ja, jag vill ha dig"<br>
+        Jag vill känna din kropp emot min<br>
+        När vi två blir en
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        När vi är tillsammans och du vill dansa<br>
+        Men jag vill bara sitta och snacka<br>
+        Det blir lätt att man drar en vals<br>
+        En massa tomt snack om ingenting alls
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Jag vill känna din kropp emot min, höra pulsen slå<br>
+        Din mun tätt emot min, hjärtat snabbar på<br>
+        Jag ser på dig och du ser på mig<br>
+        Och jag säger, "Ja, ja, ja, jag vill ha dig"
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Jag vill känna din kropp emot min, höra pulsen slå<br>
+        Din mun tätt emot min, hjärtat snabbar på<br>
+        Jag vill känna din kropp emot min, höra pulsen slå<br>
+        Din mun tätt emot min, hjärtat snabbar på
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">20</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 21 · SKIT I ALLT ══════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXI</p>
+    <h2 class="song-title">Skit i allt</h2>
+    <div class="song-meta"><span class="song-credit">Text: Okänt · Musik: "Let it be" — Paul McCartney</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <span class="chord">C  G  Am  F</span>
+      <p>Om du går omkring i fjällen, tycker packningen är tung för fem.</p>
+      <span class="chord">C  G  F  Em  Dm  C</span>
+      <p>Så har vi funnit svaret: Skit i den!</p>
+      <span class="chord">C  G  Am  F</span>
+      <p>Du ligger kvar i sovsäcken och ryggsäcken står tom brevé</p>
+      <span class="chord">C  G  F  Em  Dm  C</span>
+      <p>Dom andra är redan klara, skit i det!</p>
+      <span class="chord">C  G  Am  F</span>
+      <p>Skit i allt, skit i allt, skit i allt, skit i allt.</p>
+      <span class="chord">C  G  F  Em  Dm  C</span>
+      <p>Vi har funnit svaret: Skit i allt!</p>
+    </div>
+    <div class="section">
+      <p>
+        Nedanför ett jättestup ligger kompisen med krossat knä.<br>
+        Han vrålar ut sin smärta: Skit i det!<br>
+        Det blåser full orkan och tältet håller på att följa med.<br>
+        Men varför slita ut sig? Skit i det!<br>
+        Skit i allt…
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Ni går omkring i dimman längs en dåligt utmärkt vandringsled.<br>
+        Plötsligt fattas Arne. Skit i det!<br>
+        Om du är hård i magen, tycker livet det är knappast ballt.<br>
+        Sätt dig bakom busken och skit ut allt!<br>
+        Skit ut allt…
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">21</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 22 · O'BOY ════════════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXII</p>
+    <h2 class="song-title">O'Boy</h2>
+    <div class="song-meta"><span class="song-credit">Text och musik: Peps Persson</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Oh boy! Vilket vackert väder<br>
+        Solen skiner idag<br>
+        Oh boy! Inga tunga kläder<br>
+        behövs och det gillar jag<br><br>
+        Så upp och hoppa det är sol idag<br>
+        En sån dag kan man inte ligga och dra<br>
+        Nej lämna idet och häng med mig ut<br>
+        Då sommarn kommer nu är vintern slut
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Oh boy! Hör på fågelsången<br>
+        det sjunger så man blir yr<br>
+        Oh boy! Här på trädgårdsgången<br>
+        går vägen till ett äventyr<br><br>
+        Ja tänk ändå att man kan bli så glad<br>
+        Av markens blommor och av gröna blad<br>
+        Och barnet i en kommer hem igen<br>
+        Till glömda drömmar och till sommaren
+      </p>
+    </div>
+    <div class="section">
+      <p>Oh boy!</p>
+    </div>
+    <div class="section">
+      <p>
+        Oh boy! Vilka glada toner<br>
+        det rycker och spritter i mig<br>
+        Oh boy! tusen millioner<br>
+        kramar vill jag ge dig<br><br>
+        Ja tänk att det kan va så lätt ibland<br>
+        Så enkelt som att sträcka ut en hand<br>
+        Och torka gruset av en barnakind<br>
+        Och känna värmen från en sommarvind
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Oh boy! Vilken skänk från ovan<br>
+        det är att leva idag<br>
+        Oh boy! Rena gudagåvan<br>
+        är det konstigt att jag är glad<br><br>
+        För solen skiner ju och du är här<br>
+        Och jorden spinner i sin himlasfär<br>
+        Och faktiskt när man mår på detta vis<br>
+        Är världen nära på ett paradis
+      </p>
+    </div>
+    <div class="section">
+      <p>Oh boy! Oh boy! Oh boy! Oh boy!</p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">22</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 23 · BREV FRÅN KOLONIEN ══════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXIII</p>
+    <h2 class="song-title">Brev från kolonien</h2>
+    <div class="song-meta"><span class="song-credit">Original text: Allan Sherman · Svensk text: Cornelis Vreeswijk</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Hejsan morsan, hejsan stabben<br>
+        Här är brev från älsklingsgrabben<br>
+        Vi har kul på kolonien<br>
+        Vi bor tjugoåtta gangstergrabbar i en<br>
+        Stor barack med massa sängar<br>
+        Kan ni skicka mera pengar?<br>
+        För det vore en god gärning<br>
+        Jag har spelat bort vartenda dugg på tärning
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Här är roligt vill jag lova<br>
+        Fastän lite svårt att sova<br>
+        Killen som har sängen över mig<br>
+        Han vaknar inte han när han behöver, nej<br>
+        Jag har tappat två framtänder<br>
+        För jag skulle gå på händer<br>
+        När vi lattjade charader<br>
+        Så när morsan nu får se mig får hon spader
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Ute i skogen finns baciller<br>
+        Men min kompis han har piller<br>
+        Som han köpt utav en ful typ<br>
+        Och om man äter dem blir man en jättekul typ<br>
+        Våran fröken är försvunnen<br>
+        Hon har dränkt sig uti brunnen<br>
+        För en morgon blev hon galen<br>
+        När vi släppte ut en huggorm i matsalen
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Men jag är inte, rädd för spöken<br>
+        För min kompis han har kröken<br>
+        Som han gjort utav potatis<br>
+        Och som han säljer i baracken nästan gratis<br>
+        Föreståndaren han har farit<br>
+        Han blir aldrig var han varit<br>
+        För polisen kom och tog hand<br>
+        Om honom förra veckan när vi lekte skogsbrand
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Ute i skogen finns det rådjur<br>
+        I baracken finns det smådjur<br>
+        Och min bäste kompis Tage<br>
+        Han har en liten fickkniv inuti sin mage<br>
+        Honom ska de operera<br>
+        Ja, nu vet jag inge mera<br>
+        Kram och kyss och hjärtligt tack sen<br>
+        Men nu ska vi ut och bränna grannbaracken
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">23</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 24 · JONNIE ══════════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXIV</p>
+    <h2 class="song-title">Jonnie</h2>
+    <div class="song-meta"><span class="song-credit">Text och Musik: Kal P. Dal</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">C  Em  F  G</span>
+      <p>
+        Jonnie var en ängel, helt klädd i svart.<br>
+        Han ville va ute, vareviga natt.<br>
+        Han visste var dom bodde, och var dom höll till.<br>
+        Han kände räven Oskar och Buffalo Bill.<br>
+        <em>//: Jonnie vad gör du? Han var en ängel, en sån´ ängel ://<br></em>
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">Tal</p>
+      <p>
+        Och så en kväll när Jonnie skulle gå ut<br>
+        Så sa hans mor med darr på rösten:<br>
+        Jonnie, Jonnie var ska du gå?<br>
+        Jag är så orolig för dig ikväll.<br>
+        Men Jonnie han sa bara: UT.
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Så Jonnie gjorde intjack på bensinmacken.<br>
+        Det skulle han tji gjort dom hade alarm på den.<br>
+        Så bängen kom, Jonnies båge drog iväg.<br>
+        Men vägen krökte och i vägen stod ett träd.<br>
+        Jonnie hur kör du? Han var en ängel, en sån' ängel.<br>
+        Jonnie nu dör du, Han var en ängel, en sån' ängel.<br>
+        Så Jonnie flög opp till Sankte Pär.<br>
+        Men Pär han sa bara: Jonnie, va gör du här?<br>
+        Du får ta och gå ett par trappor ner.<br>
+        Där finns det plats till många, många fler.
+      </p>
+    </div>
+    <div class="section">
+      <p><em>//: Jonnie vad gör du? Han var en ängel, en sån´ ängel ://<br></em></p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">24</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 25 · TILL SJ ═════════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXV</p>
+    <h2 class="song-title">Till SJ</h2>
+    <div class="song-meta"><span class="song-credit">Text &amp; Musik: Stefan Demert</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        Boka plats, biljett och res<br>
+        Medan möjligheten ges<br>
+        Med vår järnväg vart du vill<br>
+        Snart finns den inte till
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Ta en tripp med andra klass<br>
+        Gratis vatten, bruna dass<br>
+        Om du kommer fram i tid<br>
+        Så fröjda dig därvid
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        SJ, SJ gamle vän<br>
+        Festligt att du lever än<br>
+        Men du ser rätt krasslig ut<br>
+        Snart hörs ditt sista tut
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Vad ska du med flyg och bil<br>
+        Tåget för dig många mil<br>
+        Dyrare för varje år<br>
+        Men tänk på vad du får
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Unna dig en kafferast<br>
+        Det finns smörgåsar i plast<br>
+        Dem har rest i många dar<br>
+        Men ligger ändå kvar
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        SJ, SJ, gamle vän<br>
+        Festligt att du lever än<br>
+        Men du ser rätt krasslig ut<br>
+        Snart hörs ditt sista tut<br><br>
+        Men du ser rätt krasslig ut<br>
+        Snart hörs ditt sista tut
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">25</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 26 · LEAVING ON A JET PLANE ══════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXVI</p>
+    <h2 class="song-title">Leaving on a jet plane</h2>
+    <div class="song-meta"><span class="song-credit">Text &amp; Musik: John Denver</span></div>
+  </div>
+  <div class="lyrics">
+    <div class="section">
+      <p>
+        All my bags are packed, I'm ready to go<br>
+        I'm standing here outside your door<br>
+        I hate to wake you up to say goodbye<br>
+        But the dawn is breaking, it's early morn<br>
+        The taxi's waiting, he's blowin' his horn<br>
+        Already I'm so lonesome I could die
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        So kiss me and smile for me<br>
+        Tell me that you'll wait for me<br>
+        Hold me like you'll never let me go<br>
+        'Cause I'm leaving on a jet plane<br>
+        Don't know when I'll be back again<br>
+        Oh babe, I hate to go
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        There's so many times I've let you down<br>
+        So many times I've played around<br>
+        I tell you now, they don't mean a thing<br>
+        Every place I go, I'll think of you<br>
+        Every song I sing, I'll sing for you<br>
+        When I come back, I'll bring your wedding ring
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Now the time has come to leave you<br>
+        One more time, let me kiss you<br>
+        Then close your eyes and I'll be on my way<br>
+        Dream about the days to come<br>
+        When I won't have to leave alone<br>
+        About the times I won't have to say
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        I'm leaving on a jet plane<br>
+        Don't know when I'll be back again<br>
+        Oh babe, I hate to go
+      </p>
+    </div>
+  </div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">26</span><div class="page-foot-line"></div></div>
+</div>
+
+<!-- ══ 27 · TVM SÅNGEN ══════════════════════════════ -->
+<div class="page">
+  <div class="song-header">
+    <p class="song-number">XXVII</p>
+    <h2 class="song-title">TVM sången</h2>
+    <div class="song-meta"><span class="song-credit">Text &amp; Musik: Martin Björnsson</span></div>
+  </div>
+  <div class="lyrics single">
+    <div class="section">
+      <span class="chord">Am  C  Dm  E</span>
+      <p>Det finns en värld som jag far till ibland,</p>
+      <span class="chord">Am  G  Em  Am</span>
+      <p>där själen får plats i sinnenas land</p>
+      <span class="chord">Am  C  Dm  E</span>
+      <p>Följ mig och se hur vacker där är</p>
+      <span class="chord">Am  G  Em  Am</span>
+      <p>Fjällvärldens vidd, skogar och skär</p>
+      <span class="chord">Dm  C  G  Am</span>
+      <p>Vi vandrar, vandrar omkring</p>
+      <span class="chord">Dm  C  G  Am</span>
+      <p>I skogarnas sal, det hörs ingenting</p>
+      <span class="chord">Am  C  Dm  E</span>
+      <p>Älvorna dansar och natten är lång</p>
+      <span class="chord">Am  G  Em  Am</span>
+      <p>vi samlas kring elden och sjunger en sång</p>
+    </div>
+    <div class="section">
+      <p>
+        Om du vill veta hur man kommer hit,<br>
+        lyss till ditt inre det räcker en bit.<br>
+        Där finner svaren, du ej kan förstå.<br>
+        Fundera en stund och börja sen gå.<br>
+        Vi strövar, strövar i fjäll.<br>
+        Vad vackert här är med norrsken ikväll.<br>
+        Liv du ger liv, du brusande älv.<br>
+        Famnad av fjällen du finner dig själv.
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Dagarna kommer och dagarna går, ju äldre du blir,<br>
+        men världen består.<br>
+        Ut och upplev känn fridens behag.<br>
+        Där ska vi träffas en dag du och jag.<br>
+        Vi paddlar, paddlar i sjö.<br>
+        Skrinnar som barn, ända till tö.<br>
+        Stormar som river vidöppna hav,<br>
+        sover så gott när sjön ligger kav.
+      </p>
+    </div>
+    <div class="section">
+      <p>
+        Trollbunden längtar jag att återse,<br>
+        mångubben skimra och mot mig le.<br>
+        Solen går upp, fjäll, hav och fur.<br>
+        Omfamna mig, du moder natur.
+      </p>
+    </div>
+  </div>
+  <div class="flourish">✦ &nbsp; ✦ &nbsp; ✦</div>
+  <div class="page-foot"><div class="page-foot-line"></div><span class="page-foot-num">27</span><div class="page-foot-line"></div></div>
+</div>
+
+</body>
+</html>
