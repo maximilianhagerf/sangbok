@@ -13,6 +13,95 @@ const STYLE_LABELS: Record<PrintStyle, { label: string; sub: string }> = {
   cards:    { label: 'Kort',       sub: 'A4 · kreditkortstorlek · vik & laminera' },
 };
 
+// ─── Style presets ────────────────────────────────────────────────────────────
+
+interface Preset {
+  id: string;
+  name: string;
+  sub: string;
+  fontsUrl: string;
+  vars: Record<string, string>;
+  swatch: [string, string, string]; // [bg, ink, accent]
+}
+
+const PRESETS: Preset[] = [
+  {
+    id: 'klassisk',
+    name: 'Klassisk',
+    sub: 'Varm & traditionell',
+    fontsUrl: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
+    vars: {
+      '--cream': '#F8F5EF', '--ink': '#1E1B18', '--ink-soft': '#4A4540',
+      '--gold': '#A8845A', '--gold-lt': '#C9A97A', '--rule': '#D8CFC4',
+      '--bg-outer': '#E0DCD4',
+      '--font-head': "'Cormorant Garamond', Georgia, serif",
+      '--font-body': "'EB Garamond', Georgia, serif",
+    },
+    swatch: ['#F8F5EF', '#1E1B18', '#A8845A'],
+  },
+  {
+    id: 'tidning',
+    name: 'Tidning',
+    sub: 'Redaktionell',
+    fontsUrl: 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap',
+    vars: {
+      '--cream': '#FFFDF8', '--ink': '#111111', '--ink-soft': '#555555',
+      '--gold': '#8B0000', '--gold-lt': '#CC2222', '--rule': '#CCCCCC',
+      '--bg-outer': '#CCCCCC',
+      '--font-head': "'Playfair Display', Georgia, serif",
+      '--font-body': "'Source Serif 4', Georgia, serif",
+    },
+    swatch: ['#FFFDF8', '#111111', '#8B0000'],
+  },
+  {
+    id: 'nordisk',
+    name: 'Nordisk',
+    sub: 'Kylig & minimal',
+    fontsUrl: 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;1,400&display=swap',
+    vars: {
+      '--cream': '#F0F4F5', '--ink': '#1B2D35', '--ink-soft': '#4A6572',
+      '--gold': '#3E7D96', '--gold-lt': '#6AAFC4', '--rule': '#C0D4DC',
+      '--bg-outer': '#C8D8DF',
+      '--font-head': "'Libre Baskerville', Georgia, serif",
+      '--font-body': "'PT Serif', Georgia, serif",
+    },
+    swatch: ['#F0F4F5', '#1B2D35', '#3E7D96'],
+  },
+  {
+    id: 'mork',
+    name: 'Mörk',
+    sub: 'Nattlig & elegant',
+    fontsUrl: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
+    vars: {
+      '--cream': '#1E1B2E', '--ink': '#E8E4DC', '--ink-soft': '#A09898',
+      '--gold': '#D4A853', '--gold-lt': '#E8C97A', '--rule': '#3D3555',
+      '--bg-outer': '#0F0D1A',
+      '--font-head': "'Cormorant Garamond', Georgia, serif",
+      '--font-body': "'EB Garamond', Georgia, serif",
+    },
+    swatch: ['#1E1B2E', '#E8E4DC', '#D4A853'],
+  },
+  {
+    id: 'pastoral',
+    name: 'Pastoral',
+    sub: 'Naturlig & varm',
+    fontsUrl: 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap',
+    vars: {
+      '--cream': '#F5EDD6', '--ink': '#2D3B1F', '--ink-soft': '#5B6E42',
+      '--gold': '#8B7040', '--gold-lt': '#AA9060', '--rule': '#D4C5A0',
+      '--bg-outer': '#DDD0AA',
+      '--font-head': "'Lora', Georgia, serif",
+      '--font-body': "'Crimson Pro', Georgia, serif",
+    },
+    swatch: ['#F5EDD6', '#2D3B1F', '#8B7040'],
+  },
+];
+
+function presetCSS(p: Preset): string {
+  const vars = Object.entries(p.vars).map(([k, v]) => `${k}: ${v};`).join(' ');
+  return `@import url('${p.fontsUrl}'); :root { ${vars} }`;
+}
+
 const ROMAN = [
   'I','II','III','IV','V','VI','VII','VIII','IX','X',
   'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
@@ -119,12 +208,23 @@ interface CardData {
 }
 
 // Height of a section in "line units" at the card's font size (0.54rem, lh 1.5).
-// This mirrors the CSS greedy column-fill with break-inside:avoid:
-// sections pile into the current column until one doesn't fit, then move to the next.
+// This mirrors the CSS greedy column-fill with break-inside:avoid.
+//
+// We estimate visual rows per line using character count rather than just counting
+// newlines — wider display fonts (e.g. Playfair Display) wrap sooner than narrow
+// ones (EB Garamond), so a lyric line like "[Jasmin:] Så mycket vi har kvar att se"
+// takes 2 visual rows in Playfair but 1 in EB Garamond. Using a conservative
+// chars-per-line threshold catches the worst case across all presets.
+const CHARS_PER_COL_LINE = 28; // ~37.8mm column at 0.54rem, conservative for wide fonts
+
 function sectionHeight(sec: Section): number {
-  const lyricLines = sec.content ? sec.content.split('\n').length : 0;
+  const lines = sec.content ? sec.content.split('\n') : [];
   const hasChords = sec.chords.length > 0;
-  return (sec.label ? 0.7 : 0) + lyricLines + (hasChords ? lyricLines * 0.7 : 0) + 0.4;
+  const lyricRows = lines.reduce(
+    (sum, line) => sum + Math.max(1, Math.ceil(line.trim().length / CHARS_PER_COL_LINE)),
+    0,
+  );
+  return (sec.label ? 0.7 : 0) + lyricRows + (hasChords ? lyricRows * 0.7 : 0) + 0.4;
 }
 
 // Simulate CSS multi-column fill with break-inside:avoid.
@@ -257,44 +357,56 @@ function CardSheet({ cards }: { cards: CardData[] }) {
 // ─── CSS per style ────────────────────────────────────────────────────────────
 
 const BASE_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
-  :root {
-    --cream: #F8F5EF; --ink: #1E1B18; --ink-soft: #4A4540;
-    --gold: #A8845A; --gold-lt: #C9A97A; --rule: #D8CFC4;
-  }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'EB Garamond', Georgia, serif; color: var(--ink); }
+  body { font-family: var(--font-body); color: var(--ink); }
   .song-dot { color: var(--rule); }
   .song-original { letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; }
   .section-label { letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
-  .chord { font-family: 'EB Garamond', Georgia, serif; letter-spacing: 0.08em;
-    color: var(--gold-lt); display: block; }
+  .chord { font-family: var(--font-body); letter-spacing: 0.08em; color: var(--gold-lt); display: block; }
+
+  /* ── Screen UI (hidden on print) ── */
   .style-switcher { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 0.5rem; background: rgba(30,27,24,0.92); backdrop-filter: blur(8px);
+    display: flex; gap: 0.5rem; background: rgba(20,18,16,0.92); backdrop-filter: blur(8px);
     padding: 0.5rem; border-radius: 14px; z-index: 100; box-shadow: 0 4px 24px rgba(0,0,0,.3); }
   .style-btn { padding: 0.5rem 1rem; border-radius: 10px; border: none; cursor: pointer;
-    font-family: 'Geist', sans-serif; transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    font-family: sans-serif; transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 1px; }
   .style-btn .btn-label { font-size: 0.8rem; font-weight: 500; }
   .style-btn .btn-sub { font-size: 0.6rem; opacity: 0.7; white-space: nowrap; }
   .style-btn:not(.active) { background: transparent; color: rgba(248,245,239,.6); }
   .style-btn:not(.active):hover { background: rgba(248,245,239,.1); color: #F8F5EF; }
   .style-btn.active { background: #F8F5EF; color: #1E1B18; }
+
+  .preset-panel { position: fixed; left: 1.5rem; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 0.25rem;
+    background: rgba(20,18,16,0.92); backdrop-filter: blur(8px);
+    padding: 0.5rem; border-radius: 14px; z-index: 100; box-shadow: 0 4px 24px rgba(0,0,0,.3); }
+  .preset-btn { display: flex; align-items: center; gap: 0.55rem; padding: 0.45rem 0.65rem;
+    border-radius: 10px; border: none; cursor: pointer; background: transparent;
+    text-align: left; transition: all .15s; color: rgba(248,245,239,.6); }
+  .preset-btn:hover { background: rgba(248,245,239,.1); color: #F8F5EF; }
+  .preset-btn.active { background: rgba(248,245,239,.14); color: #F8F5EF; }
+  .preset-swatch { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+  .preset-swatch span { display: block; width: 14px; height: 5px; border-radius: 2px; }
+  .preset-name { display: block; font-size: 0.75rem; font-weight: 500; font-family: sans-serif; line-height: 1.2; }
+  .preset-sub { display: block; font-size: 0.55rem; opacity: 0.6; font-family: sans-serif; }
+
   .print-btn { position: fixed; bottom: 2rem; right: 2rem; background: #1E1B18; color: #F8F5EF;
     border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.875rem;
     cursor: pointer; font-family: sans-serif; box-shadow: 0 4px 20px rgba(0,0,0,.2); z-index: 100; }
   .print-btn:hover { background: #333; }
-  @media print { .style-switcher, .print-btn { display: none !important; } }
+
+  @media print { .style-switcher, .preset-panel, .print-btn { display: none !important; } }
 `;
 
 const STANDARD_CSS = `
-  html { background: #E8E4DC; font-size: 16px; }
-  body { background: #E8E4DC; padding: 5rem 1rem 2rem; }
+  html { background: var(--bg-outer); font-size: 16px; }
+  body { background: var(--bg-outer); padding: 5rem 1rem 2rem; }
   .page { width: 210mm; min-height: 297mm; background: var(--cream); margin: 0 auto 3rem;
     padding: 20mm 20mm 18mm; position: relative; box-shadow: 0 4px 40px rgba(0,0,0,.12); }
   .song-header { margin-bottom: 6mm; }
-  .song-number { font-family: 'Cormorant Garamond'; font-size: 0.65rem; letter-spacing: 0.18em;
+  .song-number { font-family: var(--font-head); font-size: 0.65rem; letter-spacing: 0.18em;
     text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 1mm; }
-  .song-title { font-family: 'Cormorant Garamond'; font-size: 1.85rem; font-weight: 300;
+  .song-title { font-family: var(--font-head); font-size: 1.85rem; font-weight: 300;
     letter-spacing: -0.01em; line-height: 1.1; color: var(--ink); }
   .song-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 2mm; }
   .song-credit { font-size: 0.7rem; letter-spacing: 0.06em; color: var(--ink-soft); text-transform: uppercase; }
@@ -320,17 +432,17 @@ const STANDARD_CSS = `
 `;
 
 const COMPACT_CSS = `
-  html { background: #E8E4DC; font-size: 16px; }
-  body { background: #E8E4DC; padding: 5rem 1rem 2rem; }
+  html { background: var(--bg-outer); font-size: 16px; }
+  body { background: var(--bg-outer); padding: 5rem 1rem 2rem; }
   .compact-sheet { width: 210mm; background: var(--cream); margin: 0 auto 3rem;
     padding: 12mm 14mm 10mm; box-shadow: 0 4px 40px rgba(0,0,0,.12); }
   .song-block { break-inside: avoid; padding-bottom: 4mm; margin-bottom: 4mm;
     border-bottom: 0.5px solid var(--rule); }
   .song-block:last-child { border-bottom: none; margin-bottom: 0; }
   .song-header-inline { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2mm; }
-  .song-number { font-family: 'Cormorant Garamond'; font-size: 0.6rem; letter-spacing: 0.16em;
+  .song-number { font-family: var(--font-head); font-size: 0.6rem; letter-spacing: 0.16em;
     text-transform: uppercase; color: var(--gold); }
-  .song-title { font-family: 'Cormorant Garamond'; font-size: 1.05rem; font-weight: 500;
+  .song-title { font-family: var(--font-head); font-size: 1.05rem; font-weight: 500;
     line-height: 1.2; color: var(--ink); }
   .song-credit { font-size: 0.6rem; letter-spacing: 0.05em; color: var(--ink-soft);
     text-transform: uppercase; margin-left: auto; }
@@ -347,14 +459,14 @@ const COMPACT_CSS = `
 `;
 
 const BOOKLET_CSS = `
-  html { background: #D4CFC8; font-size: 15px; }
-  body { background: #D4CFC8; padding: 5rem 1rem 2rem; }
+  html { background: var(--bg-outer); font-size: 15px; }
+  body { background: var(--bg-outer); padding: 5rem 1rem 2rem; }
   .page { width: 148mm; min-height: 210mm; background: var(--cream); margin: 0 auto 2.5rem;
     padding: 14mm 14mm 12mm; position: relative; box-shadow: 0 4px 32px rgba(0,0,0,.14); }
   .song-header { margin-bottom: 4mm; }
-  .song-number { font-family: 'Cormorant Garamond'; font-size: 0.58rem; letter-spacing: 0.18em;
+  .song-number { font-family: var(--font-head); font-size: 0.58rem; letter-spacing: 0.18em;
     text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 0.8mm; }
-  .song-title { font-family: 'Cormorant Garamond'; font-size: 1.45rem; font-weight: 300;
+  .song-title { font-family: var(--font-head); font-size: 1.45rem; font-weight: 300;
     letter-spacing: -0.01em; line-height: 1.1; color: var(--ink); }
   .song-meta { display: flex; align-items: center; gap: 0.4rem; margin-top: 1.5mm; flex-wrap: wrap; }
   .song-credit { font-size: 0.62rem; letter-spacing: 0.05em; color: var(--ink-soft); text-transform: uppercase; }
@@ -379,12 +491,12 @@ const BOOKLET_CSS = `
 `;
 
 const CARDS_CSS = `
-  html { background: #C0BCB5; font-size: 16px; }
-  body { background: #C0BCB5; padding: 5rem 1rem 2rem; }
+  html { background: var(--bg-outer); font-size: 16px; }
+  body { background: var(--bg-outer); padding: 5rem 1rem 2rem; }
 
   /* ── Sheet: 2×2 grid on A4 ── */
   .card-sheet {
-    width: 210mm; background: #E8E4DC; margin: 0 auto 3rem;
+    width: 210mm; background: var(--bg-outer); margin: 0 auto 3rem;
     padding: 10mm; display: grid;
     grid-template-columns: repeat(2, 85.6mm);
     column-gap: 18.8mm; row-gap: 10mm;
@@ -412,11 +524,11 @@ const CARDS_CSS = `
   }
   .card-header-row { display: flex; align-items: baseline; gap: 1.5mm; }
   .card-num {
-    font-family: 'Cormorant Garamond'; font-size: 0.4rem;
+    font-family: var(--font-head); font-size: 0.4rem;
     letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); flex-shrink: 0;
   }
   .card-title {
-    font-family: 'Cormorant Garamond'; font-size: 0.72rem; font-weight: 500;
+    font-family: var(--font-head); font-size: 0.72rem; font-weight: 500;
     line-height: 1.2; color: var(--ink);
   }
   .card-part { font-size: 0.38rem; color: var(--ink-soft); margin-left: auto; flex-shrink: 0; }
@@ -487,6 +599,33 @@ function StyleSwitcher({
   );
 }
 
+// ─── Preset panel ─────────────────────────────────────────────────────────────
+
+function PresetPanel({ current, onChange }: { current: string; onChange: (id: string) => void }) {
+  return (
+    <div className="preset-panel">
+      {PRESETS.map((p) => (
+        <button
+          key={p.id}
+          type="button"
+          className={`preset-btn ${current === p.id ? 'active' : ''}`}
+          onClick={() => onChange(p.id)}
+        >
+          <div className="preset-swatch">
+            {p.swatch.map((c) => (
+              <span key={c} style={{ background: c }} />
+            ))}
+          </div>
+          <div>
+            <span className="preset-name">{p.name}</span>
+            <span className="preset-sub">{p.sub}</span>
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ─── Cover ────────────────────────────────────────────────────────────────────
 
 function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
@@ -508,7 +647,7 @@ function Cover({ songs, style }: { songs: Song[]; style: PrintStyle }) {
       </p>
       <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
         marginBottom: isBooklet ? '5mm' : '8mm' }} />
-      <h1 style={{ fontFamily: 'Cormorant Garamond', fontSize: isBooklet ? '3rem' : '4.5rem',
+      <h1 style={{ fontFamily: 'var(--font-head)', fontSize: isBooklet ? '3rem' : '4.5rem',
         fontWeight: 300, lineHeight: 1.05, color: 'var(--ink)',
         marginBottom: isBooklet ? '4mm' : '6mm' }}>
         Våra<br /><em>Sånger</em>
@@ -535,6 +674,8 @@ export default function PrintView() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [printStyle, setPrintStyle] = useState<PrintStyle>('standard');
+  const [presetId, setPresetId] = useState(PRESETS[0].id);
+  const preset = PRESETS.find((p) => p.id === presetId) ?? PRESETS[0];
 
   useEffect(() => {
     api.getSongs().then(setSongs).finally(() => setLoading(false));
@@ -549,9 +690,10 @@ export default function PrintView() {
 
   return (
     <>
-      <style>{BASE_CSS + STYLE_CSS[printStyle]}</style>
+      <style>{presetCSS(preset) + BASE_CSS + STYLE_CSS[printStyle]}</style>
 
       <StyleSwitcher current={printStyle} onChange={setPrintStyle} />
+      <PresetPanel current={presetId} onChange={setPresetId} />
 
       {printStyle === 'compact' ? (
         // Compact: single flowing sheet, no individual page wrappers
