@@ -72,15 +72,19 @@ export default function CollectionSidebar({
         const isEditing = editingId === col.id;
 
         return (
-          <button
+          // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled via onKeyDown
+          // biome-ignore lint/a11y/noStaticElementInteractions: div with role="button" used to allow button children
+          <div
             key={col.id}
-            type="button"
-            className={`group relative rounded-xl border transition-all w-full text-left ${
+            role="button"
+            tabIndex={0}
+            className={`group relative rounded-xl border transition-all w-full text-left cursor-pointer ${
               isActive
                 ? 'bg-stone-800 border-stone-800 text-white'
                 : 'bg-white border-stone-200 hover:border-stone-300 hover:shadow-sm'
             }`}
             onClick={() => !isEditing && onSwitch(col.id)}
+            onKeyDown={(e) => !isEditing && (e.key === 'Enter' || e.key === ' ') && onSwitch(col.id)}
           >
             <div className="px-4 py-3">
               {/* Name row */}
@@ -124,9 +128,7 @@ export default function CollectionSidebar({
 
               {/* Song count */}
               <div
-                className={`flex items-center gap-1 mt-2 text-xs ${
-                  isActive ? 'text-stone-400' : 'text-stone-400'
-                }`}
+                className="flex items-center gap-1 mt-2 text-xs text-stone-400"
               >
                 <Music size={11} />
                 <span>{t('songList.songCount', { count: col.song_count ?? 0 })}</span>
@@ -173,7 +175,7 @@ export default function CollectionSidebar({
                 )}
               </div>
             )}
-          </button>
+          </div>
         );
       })}
 
