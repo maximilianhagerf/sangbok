@@ -160,18 +160,6 @@ export default function SongList() {
           </div>
         </header>
 
-        {/* Cover settings panel */}
-        {showSettings && activeCollectionId !== null && (
-          <div className="px-8 pt-5">
-            <CoverSettingsPanel
-              collectionId={activeCollectionId}
-              settings={settings}
-              onSave={setSettings}
-              onClose={() => setShowSettings(false)}
-            />
-          </div>
-        )}
-
         {/* Song list */}
         <div className="flex-1 overflow-y-auto px-8 py-6">
           {loading && activeCollectionId !== null ? (
@@ -229,6 +217,16 @@ export default function SongList() {
           onClear={() => setSelected(new Set())}
           onDelete={handleBulkDelete}
           deleting={deleting}
+        />
+      )}
+
+      {/* Cover settings modal */}
+      {showSettings && activeCollectionId !== null && (
+        <CoverSettingsPanel
+          collectionId={activeCollectionId}
+          settings={settings}
+          onSave={setSettings}
+          onClose={() => setShowSettings(false)}
         />
       )}
 
