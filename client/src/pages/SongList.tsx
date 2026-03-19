@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import * as api from '../api';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import type { Collection, Settings as AppSettings, Song } from '../types';
+import type { Settings as AppSettings, Collection, Song } from '../types';
 
 // ─── New Song Modal ───────────────────────────────────────────────────────────
 
@@ -152,7 +152,9 @@ function NewSongModal({ collectionId, onClose, onCreate }: NewSongModalProps) {
 
           {/* Columns */}
           <div>
-            <p className="block text-xs font-medium text-stone-500 mb-1.5">{t('songForm.columnsLabel')}</p>
+            <p className="block text-xs font-medium text-stone-500 mb-1.5">
+              {t('songForm.columnsLabel')}
+            </p>
             <div className="flex gap-2" role="radiogroup" aria-label={t('songForm.columnsLabel')}>
               {([1, 2, 3] as const).map((col) => (
                 <button
@@ -242,7 +244,11 @@ function CollectionSwitcher({
   }
 
   async function commitNew() {
-    if (!newName.trim()) { setShowNewInput(false); setNewName(''); return; }
+    if (!newName.trim()) {
+      setShowNewInput(false);
+      setNewName('');
+      return;
+    }
     setCreating(true);
     try {
       await onCreate(newName.trim());
@@ -266,7 +272,10 @@ function CollectionSwitcher({
               onBlur={() => commitEdit(col.id)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') commitEdit(col.id);
-                if (e.key === 'Escape') { setEditingId(null); setEditingName(''); }
+                if (e.key === 'Escape') {
+                  setEditingId(null);
+                  setEditingName('');
+                }
               }}
               className="px-3 py-1 text-sm border border-stone-400 rounded-full outline-none focus:ring-2 focus:ring-stone-200 bg-white text-stone-800 w-36"
             />
@@ -324,7 +333,10 @@ function CollectionSwitcher({
           onBlur={commitNew}
           onKeyDown={(e) => {
             if (e.key === 'Enter') commitNew();
-            if (e.key === 'Escape') { setShowNewInput(false); setNewName(''); }
+            if (e.key === 'Escape') {
+              setShowNewInput(false);
+              setNewName('');
+            }
           }}
           placeholder={t('collections.namePlaceholder')}
           disabled={creating}
@@ -506,7 +518,6 @@ function BulkBar({ count, total, onSelectAll, onClear, onDelete, deleting }: Bul
   );
 }
 
-
 // ─── SongList Page ────────────────────────────────────────────────────────────
 
 export default function SongList() {
@@ -556,10 +567,7 @@ export default function SongList() {
   useEffect(() => {
     if (activeCollectionId === null) return;
     setLoading(true);
-    Promise.all([
-      api.getSongs(activeCollectionId),
-      api.getSettings(activeCollectionId),
-    ])
+    Promise.all([api.getSongs(activeCollectionId), api.getSettings(activeCollectionId)])
       .then(([s, cfg]) => {
         setSongs(s);
         setSettings(cfg);
@@ -587,8 +595,8 @@ export default function SongList() {
       if (activeCollectionId === id && remaining.length > 0) {
         switchCollection(remaining[0].id);
       }
-    } catch (err: any) {
-      alert(err.message ?? t('collections.lastCollection'));
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : t('collections.lastCollection'));
     }
   }
 
@@ -630,10 +638,7 @@ export default function SongList() {
   }
 
   async function handleBulkDelete() {
-    if (
-      !confirm(t('bulkBar.confirmDelete', { count: selected.size }))
-    )
-      return;
+    if (!confirm(t('bulkBar.confirmDelete', { count: selected.size }))) return;
     setDeleting(true);
     try {
       await Promise.all([...selected].map((id) => api.deleteSong(id)));
@@ -646,7 +651,9 @@ export default function SongList() {
 
   if (loading && activeCollectionId === null) {
     return (
-      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">{t('songEdit.loading')}</div>
+      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+        {t('songEdit.loading')}
+      </div>
     );
   }
 
@@ -658,11 +665,13 @@ export default function SongList() {
           <h1 className="font-['Cormorant_Garamond'] text-3xl font-light text-stone-800">
             {t('songList.heading')}
           </h1>
-          <p className="text-sm text-stone-400 mt-0.5">{t('songList.songCount', { count: songs.length })}</p>
+          <p className="text-sm text-stone-400 mt-0.5">
+            {t('songList.songCount', { count: songs.length })}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <a
-            href={'/print?c=' + activeCollectionId}
+            href={`/print?c=${activeCollectionId}`}
             target="_blank"
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
             rel="noopener"
@@ -706,12 +715,15 @@ export default function SongList() {
           onSubmit={handleSaveSettings}
           className="mb-6 p-4 border border-stone-200 rounded-xl bg-stone-50 space-y-3"
         >
-          <p className="text-xs font-medium text-stone-500 uppercase tracking-wider">{t('coverSettings.title')}</p>
+          <p className="text-xs font-medium text-stone-500 uppercase tracking-wider">
+            {t('coverSettings.title')}
+          </p>
           <div>
-            <label className="block text-xs text-stone-500 mb-1">
+            <label htmlFor="cs-title" className="block text-xs text-stone-500 mb-1">
               {t('coverSettings.coverTitle')} <span className="text-red-400">*</span>
             </label>
             <input
+              id="cs-title"
               type="text"
               required
               value={settings.cover_title}
@@ -721,8 +733,11 @@ export default function SongList() {
             />
           </div>
           <div>
-            <label className="block text-xs text-stone-500 mb-1">{t('coverSettings.coverSubtitle')}</label>
+            <label htmlFor="cs-subtitle" className="block text-xs text-stone-500 mb-1">
+              {t('coverSettings.coverSubtitle')}
+            </label>
             <input
+              id="cs-subtitle"
               type="text"
               value={settings.cover_subtitle}
               onChange={(e) => setSettings((s) => ({ ...s, cover_subtitle: e.target.value }))}
@@ -731,8 +746,11 @@ export default function SongList() {
             />
           </div>
           <div>
-            <label className="block text-xs text-stone-500 mb-1">{t('coverSettings.coverCredit')}</label>
+            <label htmlFor="cs-credit" className="block text-xs text-stone-500 mb-1">
+              {t('coverSettings.coverCredit')}
+            </label>
             <input
+              id="cs-credit"
               type="text"
               value={settings.cover_credit}
               onChange={(e) => setSettings((s) => ({ ...s, cover_credit: e.target.value }))}
@@ -761,13 +779,19 @@ export default function SongList() {
 
       {/* Loading indicator when switching collections */}
       {loading && activeCollectionId !== null && (
-        <div className="flex items-center justify-center py-8 text-stone-400 text-sm">{t('songEdit.loading')}</div>
+        <div className="flex items-center justify-center py-8 text-stone-400 text-sm">
+          {t('songEdit.loading')}
+        </div>
       )}
 
       {/* List */}
       {!loading && (
         <>
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
             <SortableContext items={songs.map((s) => s.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-2 pl-8">
                 {songs.map((song) => (

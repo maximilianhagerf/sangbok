@@ -46,7 +46,9 @@ export default function SongEdit() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">{t('songEdit.loading')}</div>
+      <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+        {t('songEdit.loading')}
+      </div>
     );
   if (!song)
     return (
@@ -122,7 +124,9 @@ export default function SongEdit() {
         </div>
 
         <div>
-          <p className="block text-xs font-medium text-stone-500 mb-2">{t('songForm.columnsLabel')}</p>
+          <p className="block text-xs font-medium text-stone-500 mb-2">
+            {t('songForm.columnsLabel')}
+          </p>
           <div className="flex gap-2" role="radiogroup" aria-label={t('songForm.columnsLabel')}>
             {([1, 2, 3] as const).map((col) => (
               <button

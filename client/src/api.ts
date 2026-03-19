@@ -24,7 +24,10 @@ export const deleteCollection = (id: number) =>
 export const getSongs = (collectionId: number) => request<Song[]>(`/api/songs?c=${collectionId}`);
 export const getSong = (id: number) => request<Song>(`/api/songs/${id}`);
 export const createSong = (collectionId: number, body: Partial<Song>) =>
-  request<Song>('/api/songs', { method: 'POST', body: JSON.stringify({ ...body, collection_id: collectionId }) });
+  request<Song>('/api/songs', {
+    method: 'POST',
+    body: JSON.stringify({ ...body, collection_id: collectionId }),
+  });
 export const updateSong = (id: number, body: Partial<Song>) =>
   request<Song>(`/api/songs/${id}`, { method: 'PUT', body: JSON.stringify(body) });
 export const deleteSong = (id: number) => request<void>(`/api/songs/${id}`, { method: 'DELETE' });
@@ -32,9 +35,13 @@ export const reorderSongs = (ids: number[]) =>
   request<void>('/api/songs/reorder', { method: 'PATCH', body: JSON.stringify({ ids }) });
 
 // Settings
-export const getSettings = (collectionId: number) => request<Settings>(`/api/settings?c=${collectionId}`);
+export const getSettings = (collectionId: number) =>
+  request<Settings>(`/api/settings?c=${collectionId}`);
 export const updateSettings = (collectionId: number, body: Settings) =>
-  request<Settings>(`/api/settings?c=${collectionId}`, { method: 'PUT', body: JSON.stringify(body) });
+  request<Settings>(`/api/settings?c=${collectionId}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
 
 // Sections
 export const createSection = (songId: number, body: Partial<Section>) =>

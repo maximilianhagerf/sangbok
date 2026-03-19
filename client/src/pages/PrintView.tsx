@@ -11,9 +11,9 @@ type PrintStyle = 'standard' | 'compact' | 'booklet' | 'cards';
 
 const STYLE_KEYS: Record<PrintStyle, { label: string; sub: string }> = {
   standard: { label: 'printView.styles.standard', sub: 'printView.styles.standardSub' },
-  compact:  { label: 'printView.styles.compact',  sub: 'printView.styles.compactSub' },
-  booklet:  { label: 'printView.styles.booklet',  sub: 'printView.styles.bookletSub' },
-  cards:    { label: 'printView.styles.cards',    sub: 'printView.styles.cardsSub' },
+  compact: { label: 'printView.styles.compact', sub: 'printView.styles.compactSub' },
+  booklet: { label: 'printView.styles.booklet', sub: 'printView.styles.bookletSub' },
+  cards: { label: 'printView.styles.cards', sub: 'printView.styles.cardsSub' },
 };
 
 // ─── Style presets ────────────────────────────────────────────────────────────
@@ -32,10 +32,15 @@ const PRESETS: Preset[] = [
     id: 'klassisk',
     name: 'Klassisk',
     sub: 'Varm & traditionell',
-    fontsUrl: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
+    fontsUrl:
+      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
     vars: {
-      '--cream': '#F8F5EF', '--ink': '#1E1B18', '--ink-soft': '#4A4540',
-      '--gold': '#A8845A', '--gold-lt': '#C9A97A', '--rule': '#D8CFC4',
+      '--cream': '#F8F5EF',
+      '--ink': '#1E1B18',
+      '--ink-soft': '#4A4540',
+      '--gold': '#A8845A',
+      '--gold-lt': '#C9A97A',
+      '--rule': '#D8CFC4',
       '--bg-outer': '#E0DCD4',
       '--font-head': "'Cormorant Garamond', Georgia, serif",
       '--font-body': "'EB Garamond', Georgia, serif",
@@ -46,10 +51,15 @@ const PRESETS: Preset[] = [
     id: 'tidning',
     name: 'Tidning',
     sub: 'Redaktionell',
-    fontsUrl: 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap',
+    fontsUrl:
+      'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap',
     vars: {
-      '--cream': '#FFFDF8', '--ink': '#111111', '--ink-soft': '#555555',
-      '--gold': '#8B0000', '--gold-lt': '#CC2222', '--rule': '#CCCCCC',
+      '--cream': '#FFFDF8',
+      '--ink': '#111111',
+      '--ink-soft': '#555555',
+      '--gold': '#8B0000',
+      '--gold-lt': '#CC2222',
+      '--rule': '#CCCCCC',
       '--bg-outer': '#CCCCCC',
       '--font-head': "'Playfair Display', Georgia, serif",
       '--font-body': "'Source Serif 4', Georgia, serif",
@@ -60,10 +70,15 @@ const PRESETS: Preset[] = [
     id: 'nordisk',
     name: 'Nordisk',
     sub: 'Kylig & minimal',
-    fontsUrl: 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;1,400&display=swap',
+    fontsUrl:
+      'https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;1,400&display=swap',
     vars: {
-      '--cream': '#F0F4F5', '--ink': '#1B2D35', '--ink-soft': '#4A6572',
-      '--gold': '#3E7D96', '--gold-lt': '#6AAFC4', '--rule': '#C0D4DC',
+      '--cream': '#F0F4F5',
+      '--ink': '#1B2D35',
+      '--ink-soft': '#4A6572',
+      '--gold': '#3E7D96',
+      '--gold-lt': '#6AAFC4',
+      '--rule': '#C0D4DC',
       '--bg-outer': '#C8D8DF',
       '--font-head': "'Libre Baskerville', Georgia, serif",
       '--font-body': "'PT Serif', Georgia, serif",
@@ -74,10 +89,15 @@ const PRESETS: Preset[] = [
     id: 'mork',
     name: 'Mörk',
     sub: 'Nattlig & elegant',
-    fontsUrl: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
+    fontsUrl:
+      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
     vars: {
-      '--cream': '#1E1B2E', '--ink': '#E8E4DC', '--ink-soft': '#A09898',
-      '--gold': '#D4A853', '--gold-lt': '#E8C97A', '--rule': '#3D3555',
+      '--cream': '#1E1B2E',
+      '--ink': '#E8E4DC',
+      '--ink-soft': '#A09898',
+      '--gold': '#D4A853',
+      '--gold-lt': '#E8C97A',
+      '--rule': '#3D3555',
       '--bg-outer': '#0F0D1A',
       '--font-head': "'Cormorant Garamond', Georgia, serif",
       '--font-body': "'EB Garamond', Georgia, serif",
@@ -88,10 +108,15 @@ const PRESETS: Preset[] = [
     id: 'pastoral',
     name: 'Pastoral',
     sub: 'Naturlig & varm',
-    fontsUrl: 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap',
+    fontsUrl:
+      'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap',
     vars: {
-      '--cream': '#F5EDD6', '--ink': '#2D3B1F', '--ink-soft': '#5B6E42',
-      '--gold': '#8B7040', '--gold-lt': '#AA9060', '--rule': '#D4C5A0',
+      '--cream': '#F5EDD6',
+      '--ink': '#2D3B1F',
+      '--ink-soft': '#5B6E42',
+      '--gold': '#8B7040',
+      '--gold-lt': '#AA9060',
+      '--rule': '#D4C5A0',
       '--bg-outer': '#DDD0AA',
       '--font-head': "'Lora', Georgia, serif",
       '--font-body': "'Crimson Pro', Georgia, serif",
@@ -101,15 +126,53 @@ const PRESETS: Preset[] = [
 ];
 
 function presetCSS(p: Preset): string {
-  const vars = Object.entries(p.vars).map(([k, v]) => `${k}: ${v};`).join(' ');
+  const vars = Object.entries(p.vars)
+    .map(([k, v]) => `${k}: ${v};`)
+    .join(' ');
   return `@import url('${p.fontsUrl}'); :root { ${vars} }`;
 }
 
 const ROMAN = [
-  'I','II','III','IV','V','VI','VII','VIII','IX','X',
-  'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
-  'XXI','XXII','XXIII','XXIV','XXV','XXVI','XXVII','XXVIII','XXIX','XXX',
-  'XXXI','XXXII','XXXIII','XXXIV','XXXV','XXXVI','XXXVII','XXXVIII','XXXIX','XL',
+  'I',
+  'II',
+  'III',
+  'IV',
+  'V',
+  'VI',
+  'VII',
+  'VIII',
+  'IX',
+  'X',
+  'XI',
+  'XII',
+  'XIII',
+  'XIV',
+  'XV',
+  'XVI',
+  'XVII',
+  'XVIII',
+  'XIX',
+  'XX',
+  'XXI',
+  'XXII',
+  'XXIII',
+  'XXIV',
+  'XXV',
+  'XXVI',
+  'XXVII',
+  'XXVIII',
+  'XXIX',
+  'XXX',
+  'XXXI',
+  'XXXII',
+  'XXXIII',
+  'XXXIV',
+  'XXXV',
+  'XXXVI',
+  'XXXVII',
+  'XXXVIII',
+  'XXXIX',
+  'XL',
 ];
 
 // ─── Shared lyric renderer ────────────────────────────────────────────────────
@@ -121,7 +184,10 @@ function renderLyrics(section: Section): JSX.Element {
       <p>
         {lines.map((line, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: lyric line index is the stable identity
-          <span key={i}>{line}{i < lines.length - 1 && <br />}</span>
+          <span key={i}>
+            {line}
+            {i < lines.length - 1 && <br />}
+          </span>
         ))}
       </p>
     );
@@ -270,7 +336,14 @@ function buildCardData(songs: Song[]): CardData[] {
     let remaining = [...song.sections];
 
     if (remaining.length === 0) {
-      result.push({ song, cardNum: 1, totalCards: 1, frontSections: [], backSections: [], songIndex });
+      result.push({
+        song,
+        cardNum: 1,
+        totalCards: 1,
+        frontSections: [],
+        backSections: [],
+        songIndex,
+      });
       continue;
     }
 
@@ -284,8 +357,11 @@ function buildCardData(songs: Song[]): CardData[] {
 
     for (let ci = 0; ci < cards.length; ci++) {
       result.push({
-        song, cardNum: ci + 1, totalCards: cards.length,
-        frontSections: cards[ci].front, backSections: cards[ci].back,
+        song,
+        cardNum: ci + 1,
+        totalCards: cards.length,
+        frontSections: cards[ci].front,
+        backSections: cards[ci].back,
         songIndex,
       });
     }
@@ -312,7 +388,11 @@ function SongCard({ data }: { data: CardData }) {
                 <span className="card-num">{ROMAN[songIndex] ?? String(songIndex + 1)}</span>
               )}
               <h2 className="card-title">{song.title}</h2>
-              {multi && <span className="card-part">{cardNum}/{totalCards}</span>}
+              {multi && (
+                <span className="card-part">
+                  {cardNum}/{totalCards}
+                </span>
+              )}
             </div>
             {isFirst && (song.credit || song.original) && (
               <p className="card-sub">
@@ -644,7 +724,15 @@ function PresetPanel({ current, onChange }: { current: string; onChange: (id: st
 
 // ─── Cover ────────────────────────────────────────────────────────────────────
 
-function Cover({ songs, style, settings }: { songs: Song[]; style: PrintStyle; settings: Settings }) {
+function Cover({
+  songs,
+  style,
+  settings,
+}: {
+  songs: Song[];
+  style: PrintStyle;
+  settings: Settings;
+}) {
   const isBooklet = style === 'booklet';
   return (
     <div
@@ -658,31 +746,73 @@ function Cover({ songs, style, settings }: { songs: Song[]; style: PrintStyle; s
       }}
     >
       {settings.cover_subtitle && (
-        <p style={{ fontSize: isBooklet ? '0.58rem' : '0.68rem', letterSpacing: '0.22em',
-          textTransform: 'uppercase', color: 'var(--gold)', marginBottom: isBooklet ? '4mm' : '6mm' }}>
+        <p
+          style={{
+            fontSize: isBooklet ? '0.58rem' : '0.68rem',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            marginBottom: isBooklet ? '4mm' : '6mm',
+          }}
+        >
           {settings.cover_subtitle}
         </p>
       )}
-      <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
-        marginBottom: isBooklet ? '5mm' : '8mm' }} />
-      <h1 style={{ fontFamily: 'var(--font-head)', fontSize: isBooklet ? '3rem' : '4.5rem',
-        fontWeight: 300, lineHeight: 1.05, color: 'var(--ink)',
-        marginBottom: isBooklet ? '4mm' : '6mm' }}>
+      <div
+        style={{
+          width: '30mm',
+          height: '0.5px',
+          background: 'var(--rule)',
+          marginBottom: isBooklet ? '5mm' : '8mm',
+        }}
+      />
+      <h1
+        style={{
+          fontFamily: 'var(--font-head)',
+          fontSize: isBooklet ? '3rem' : '4.5rem',
+          fontWeight: 300,
+          lineHeight: 1.05,
+          color: 'var(--ink)',
+          marginBottom: isBooklet ? '4mm' : '6mm',
+        }}
+      >
         {settings.cover_title}
       </h1>
       {settings.cover_credit && (
-        <p style={{ fontSize: isBooklet ? '0.62rem' : '0.72rem', letterSpacing: '0.18em',
-          textTransform: 'uppercase', color: 'var(--ink-soft)',
-          marginBottom: isBooklet ? '5mm' : '8mm' }}>
+        <p
+          style={{
+            fontSize: isBooklet ? '0.62rem' : '0.72rem',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--ink-soft)',
+            marginBottom: isBooklet ? '5mm' : '8mm',
+          }}
+        >
           {settings.cover_credit}
         </p>
       )}
-      <div style={{ width: '30mm', height: '0.5px', background: 'var(--rule)',
-        marginBottom: isBooklet ? '6mm' : '10mm' }} />
-      <ul style={{ columns: isBooklet ? 1 : 2, columnGap: '6mm', listStyle: 'none',
-        textAlign: 'left', fontSize: isBooklet ? '0.64rem' : '0.72rem',
-        lineHeight: '1.8', color: 'var(--ink-soft)' }}>
-        {songs.map((s) => <li key={s.id}>{s.title}</li>)}
+      <div
+        style={{
+          width: '30mm',
+          height: '0.5px',
+          background: 'var(--rule)',
+          marginBottom: isBooklet ? '6mm' : '10mm',
+        }}
+      />
+      <ul
+        style={{
+          columns: isBooklet ? 1 : 2,
+          columnGap: '6mm',
+          listStyle: 'none',
+          textAlign: 'left',
+          fontSize: isBooklet ? '0.64rem' : '0.72rem',
+          lineHeight: '1.8',
+          color: 'var(--ink-soft)',
+        }}
+      >
+        {songs.map((s) => (
+          <li key={s.id}>{s.title}</li>
+        ))}
       </ul>
     </div>
   );
@@ -695,7 +825,11 @@ export default function PrintView() {
   const [searchParams] = useSearchParams();
   const collectionId = Number(searchParams.get('c')) || 1;
   const [songs, setSongs] = useState<Song[]>([]);
-  const [settings, setSettings] = useState<Settings>({ cover_title: '', cover_subtitle: '', cover_credit: '' });
+  const [settings, setSettings] = useState<Settings>({
+    cover_title: '',
+    cover_subtitle: '',
+    cover_credit: '',
+  });
   const [loading, setLoading] = useState(true);
   const [printStyle, setPrintStyle] = useState<PrintStyle>('standard');
   const [presetId, setPresetId] = useState(PRESETS[0].id);
@@ -703,11 +837,17 @@ export default function PrintView() {
 
   useEffect(() => {
     Promise.all([api.getSongs(collectionId), api.getSettings(collectionId)])
-      .then(([s, cfg]) => { setSongs(s); setSettings(cfg); })
+      .then(([s, cfg]) => {
+        setSongs(s);
+        setSettings(cfg);
+      })
       .finally(() => setLoading(false));
   }, [collectionId]);
 
-  if (loading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>{t('printView.loading')}</div>;
+  if (loading)
+    return (
+      <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>{t('printView.loading')}</div>
+    );
 
   // Build card data (songs split into fold-over credit cards, with continuation cards for long songs)
   const allCards = buildCardData(songs);
