@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import * as api from '../api';
 import CollectionSidebar from '../components/collections/CollectionSidebar';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import SangbokLogo from '../components/SangbokLogo';
 import CoverSettingsPanel from '../components/settings/CoverSettingsPanel';
 import BulkBar from '../components/songs/BulkBar';
 import NewSongModal from '../components/songs/NewSongModal';
@@ -109,9 +110,7 @@ export default function SongList() {
     <div className="flex h-screen overflow-hidden bg-stone-50">
       {/* ── Sidebar ─────────────────────────────── */}
       <aside className="w-60 shrink-0 border-r border-stone-200 bg-white flex flex-col px-3 py-6 gap-6 overflow-y-auto">
-        <h1 className="font-['Cormorant_Garamond'] text-2xl font-light text-stone-800 px-1">
-          {t('songList.heading')}
-        </h1>
+        <SangbokLogo />
 
         {collections.length > 0 && (
           <CollectionSidebar
