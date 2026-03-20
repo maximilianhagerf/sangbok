@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server",
     "seed": "npm run seed --prefix server",
     "format": "biome format --write .",
     "lint": "biome lint .",
