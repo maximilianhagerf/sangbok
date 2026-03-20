@@ -20,7 +20,7 @@ export default function BulkBar({
 }: BulkBarProps) {
   const { t } = useTranslation();
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-3 bg-stone-900 text-white rounded-2xl shadow-2xl shadow-stone-900/30 text-sm">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-3 bg-stone-900 text-white rounded-2xl shadow-2xl shadow-stone-900/30 text-sm max-w-[calc(100vw-2rem)]">
       <span className="text-stone-300 tabular-nums">
         <span className="text-white font-medium">{count}</span> {t('bulkBar.selected')}
       </span>

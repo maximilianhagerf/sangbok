@@ -13,7 +13,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import { Plus, Printer, Settings } from 'lucide-react';
+import { Menu, Plus, Printer, Settings, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as api from '../api';
@@ -46,6 +46,7 @@ export default function SongList() {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [deleting, setDeleting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const selecting = selected.size > 0;
 
@@ -58,6 +59,7 @@ export default function SongList() {
     switchCollection(id);
     setSelected(new Set());
     setShowSettings(false);
+    setShowSidebar(false);
   }
 
   async function handleDeleteCollection(id: number) {
@@ -108,9 +110,32 @@ export default function SongList() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-stone-50">
+      {/* ── Mobile sidebar backdrop ──────────────── */}
+      {showSidebar && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: backdrop closes sidebar on tap
+        // biome-ignore lint/a11y/noStaticElementInteractions: intentional backdrop dismiss
+        <div
+          className="fixed inset-0 z-30 bg-stone-900/40 md:hidden"
+          onClick={() => setShowSidebar(false)}
+        />
+      )}
+
       {/* ── Sidebar ─────────────────────────────── */}
-      <aside className="w-60 shrink-0 border-r border-stone-200 bg-white flex flex-col px-3 py-6 gap-6 overflow-y-auto">
-        <SangbokLogo />
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 md:static md:w-60 md:z-auto shrink-0 border-r border-stone-200 bg-white flex flex-col px-3 py-6 gap-6 overflow-y-auto transition-transform md:transition-none ${
+          showSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <SangbokLogo />
+          <button
+            type="button"
+            onClick={() => setShowSidebar(false)}
+            className="md:hidden text-stone-400 hover:text-stone-700 p-1"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
         {collections.length > 0 && (
           <CollectionSidebar
@@ -127,18 +152,29 @@ export default function SongList() {
       {/* ── Main content ────────────────────────── */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="flex items-center justify-between px-8 py-5 border-b border-stone-200 bg-white">
-          <p className="text-sm text-stone-400">
-            {t('songList.songCount', { count: songs.length })}
-          </p>
-          <div className="flex items-center gap-2">
+        <header className="flex items-center justify-between px-4 md:px-8 py-4 md:py-5 border-b border-stone-200 bg-white gap-2">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowSidebar(true)}
+              className="md:hidden text-stone-500 hover:text-stone-800 transition-colors"
+            >
+              <Menu size={20} />
+            </button>
+            <p className="text-sm text-stone-400 hidden md:block">
+              {t('songList.songCount', { count: songs.length })}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-1.5 md:gap-2">
             <a
               href={`/print?c=${activeCollectionId}`}
               target="_blank"
               rel="noopener"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+              className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 text-sm text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
             >
-              <Printer size={14} /> {t('nav.printView')}
+              <Printer size={14} />
+              <span className="hidden sm:inline">{t('nav.printView')}</span>
             </a>
             <LanguageSwitcher />
             <button
@@ -152,15 +188,16 @@ export default function SongList() {
             <button
               type="button"
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
+              className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 text-sm bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
             >
-              <Plus size={14} /> {t('songList.newSong')}
+              <Plus size={14} />
+              <span className="hidden sm:inline">{t('songList.newSong')}</span>
             </button>
           </div>
         </header>
 
         {/* Song list */}
-        <div className="flex-1 overflow-y-auto px-8 py-6">
+        <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
           {loading && activeCollectionId !== null ? (
             <div className="flex items-center justify-center py-16 text-stone-400 text-sm">
               {t('songEdit.loading')}
